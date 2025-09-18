@@ -8,9 +8,9 @@ from pyspark.sql import DataFrame
 from pyspark.sql.functions import *
 from datetime import date, timedelta
 
-class Rob(BaseJobRunner):
-    def run_job(self, spark_session, glue_context) -> None:
-        self.logger.info(f"[{Rob.__name__}] Starting Local Job ...")
+class RobRunner(BaseJobRunner):
+    def run_job(self, spark_session, glue_context, args) -> None:
+        self.logger.info(f"[{RobRunner.__name__}] Starting Local Job ...")
 
         destination_bucket = self.config.get("destination_bucket")
         output_path = self.config.get("output_path")

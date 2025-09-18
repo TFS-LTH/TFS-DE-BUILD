@@ -2,7 +2,7 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 
 class LocalJobRunner(BaseJobRunner):
 
-    def run_job(self, spark_session, glue_context) -> None:
+    def run_job(self, spark_session, glue_context, args) -> None:
         self.logger.info(f"[{LocalJobRunner.__name__}] Starting Local Job ...")
         run_job_local_pipeline(spark_session, glue_context, self.config)
 

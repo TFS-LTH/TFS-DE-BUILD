@@ -24,8 +24,8 @@ class BaseJobRunner(ABC):
         self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
 
     def execute(self):
-        self.run_job(self.spark_session, self.glue_context)
+        self.run_job(self.spark_session, self.glue_context, self.args)
 
     @abstractmethod
-    def run_job(self, spark_session, glue_context) -> None:
+    def run_job(self, spark_session, glue_context, args) -> None:
         pass

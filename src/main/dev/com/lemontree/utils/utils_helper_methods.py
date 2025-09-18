@@ -8,6 +8,7 @@ import configparser
 import uuid
 import json
 import logging
+import pandas as pd
 from datetime import date, timedelta
 
 # Logger setup
@@ -232,3 +233,16 @@ def calculate_week_number_dynamic_year(current_date):
         week_num = (days_diff // 7) + 1  # +1 to make week number 1-based
         return week_num
 
+
+def get_managed_hotels(tb_file_path: str, hotel_codes: str = None) -> list:
+
+    # Read the TB data for the month to get the hotel codes
+    tb_full = pd.read_csv(tb_file_path, header=2, encoding='ISO-8859-1')
+    tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
+
+    if hotel_codes and hotel_codes.strip():
+        managed_hotels = [i.strip() for i in hotel_codes.split(",")]
+    else:
+        managed_hotels = tb_full['Abbrevation'].dropna().tolist()
+
+    return managed_hotels
