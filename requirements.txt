@@ -3,3 +3,4 @@ pyspark
 pytest
 PyYAML
 redshift-connector
+pandas
