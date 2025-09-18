@@ -20,8 +20,16 @@ ltr:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   mapping_file: /input_files/pnl/ltr/mapping_files/hotel_code_to_ltr_mapping.csv
   portel_bucket_name: s3://protel-data
-  parquet_output_path: /output_files/pnl/ltr/parquet_files
-  csv_output_path: /output_files/pnl/ltr/csv_files
+  output_path: /output_files/pnl/ltr
+
+operational_data:
+  tb_file_path: /input_files/pnl/tb_update/tb_warehouse
+  dbr_bucket: s3://lemontree-dashboards
+  back_up_operational_data_path: /archive/pnl/operational_data
+  budget_file: output_files/budget/cummulative_budget_file_2025_2026.csv
+  ltr_output: /output_files/pnl/ltr
+  operational_data_actual: /output_files/pnl/operational_data_actuals
+  operational_data_budget: /output_files/pnl/operational_data_budget
 
 rob:
   partitions: 1
