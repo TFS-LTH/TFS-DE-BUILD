@@ -1,0 +1,2 @@
+/src/main/test/test_outputs/*
+!/src/main/test/test_outputs/.gitkeep
