@@ -70,8 +70,8 @@ def run_ltr(spark_session, glue_context, config, args):
         try:
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';')
-            df.to_parquet(f'{destination_file_path_parquet}/{hotel_code}.parquet', index=False)
-            df.to_csv(f'{destination_file_path_csv}/{hotel_code}.csv', index=False)
+            df.to_parquet(f'{destination_file_path_parquet}/{hotel_code}_ltr.parquet', index=False)
+            df.to_csv(f'{destination_file_path_csv}/{hotel_code}_ltr.csv', index=False)
 
             # LTR - to finance
             ltr = pd.read_csv(f'{destination_file_path_csv}/{hotel_code}.csv', delimiter=',')
@@ -97,7 +97,7 @@ def run_ltr(spark_session, glue_context, config, args):
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}")
     else:
         print("Processing completed without any errors.")
-        ltr_final.to_csv(f'{destination_file_path_csv}/{month_name}_LTR.csv', index=False)
+        ltr_final.to_csv(f'{destination_file_path_csv}/{month_name}_ltr.csv', index=False)
 
         send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .")
@@ -109,7 +109,7 @@ def run_ltr(spark_session, glue_context, config, args):
     print(' ############################### start processing ZIPS OF LTR ############################### ')
 
     csv_folder_prefix = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/"
-    zip_output_key = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/{month_name}_LTR.zip"
+    zip_output_key = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
 
     # List all CSV files in the given prefix
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=csv_folder_prefix)
