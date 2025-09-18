@@ -5,7 +5,7 @@ from email.mime.application import MIMEApplication
 
 ses_client = boto3.client('ses', region_name='ap-south-1')
 
-def send_email_with_attachment(notify_email_addresses, pdf_content, pdf_filename, attached_message):
+def send_email_with_attachments(notify_email_addresses, pdf_content, pdf_filename, zip_content, zip_filename, attached_message):
     msg = MIMEMultipart()
     msg['From'] = 'ltdt@lemontreehotels.com'
     msg['To'] = notify_email_addresses
@@ -23,9 +23,17 @@ def send_email_with_attachment(notify_email_addresses, pdf_content, pdf_filename
     """
     msg.attach(MIMEText(body, 'html'))
 
-    pdf_attachment = MIMEApplication(pdf_content, _subtype="pdf")
-    pdf_attachment.add_header('Content-Disposition', 'attachment', filename=pdf_filename)
-    msg.attach(pdf_attachment)
+    if pdf_filename and pdf_content:
+        # Attach PDF
+        pdf_attachment = MIMEApplication(pdf_content, _subtype="pdf")
+        pdf_attachment.add_header('Content-Disposition', 'attachment', filename=pdf_filename)
+        msg.attach(pdf_attachment)
+
+    if zip_content and zip_filename:
+        # Attach ZIP
+        zip_attachment = MIMEApplication(zip_content, _subtype="zip")
+        zip_attachment.add_header('Content-Disposition', 'attachment', filename=zip_filename)
+        msg.attach(zip_attachment)
 
     try:
         print(f"Sending email to: {notify_email_addresses}")
@@ -34,6 +42,6 @@ def send_email_with_attachment(notify_email_addresses, pdf_content, pdf_filename
             Destinations=notify_email_addresses,
             RawMessage={'Data': msg.as_string()}
         )
-        print("Email sent successfully.")
+        print(f"Email sent successfully: {response}")
     except Exception as e:
         print(f"Failed to send email: {str(e)}")

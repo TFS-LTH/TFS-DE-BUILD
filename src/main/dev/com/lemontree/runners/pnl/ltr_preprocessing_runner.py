@@ -1,6 +1,6 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_helper_methods import get_managed_hotels
-from com.lemontree.utils.utils_email import send_email_with_attachment
+from com.lemontree.utils.utils_email import send_email_with_attachments
 from datetime import datetime, timedelta
 import io
 import pandas as pd
@@ -93,13 +93,13 @@ def run_ltr(spark_session, glue_context, config, args):
         for item in error_list:
             print(item)
 
-        send_email_with_attachment(notify_email, None, None,
+        send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}")
     else:
         print("Processing completed without any errors.")
         ltr_final.to_csv(f'{destination_file_path_csv}/{month_name}_LTR.csv', index=False)
 
-        send_email_with_attachment(notify_email, None, None,
+        send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .")
 
     print(' ############################### end processing LTR PER PROCESSING ############################### ')
@@ -136,7 +136,11 @@ def run_ltr(spark_session, glue_context, config, args):
     s3_client.upload_fileobj(zip_buffer, bucket_name, zip_output_key)
     print(f"ZIP file uploaded to {bucket_name}/{zip_output_key}")
 
-    send_email_with_attachment(notify_email, None, f"{month_name}_LTR.zip",
+    # read and send email with attachment
+    with open('files.zip', 'rb') as f_zip:
+        zip_bytes = f_zip.read()
+
+    send_email_with_attachments(notify_email, None, None,zip_bytes, f"{month_name}_LTR.zip",
                                f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')

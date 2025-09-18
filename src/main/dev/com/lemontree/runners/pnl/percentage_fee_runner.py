@@ -1,6 +1,6 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_helper_methods import get_managed_hotels
-from com.lemontree.utils.utils_email import send_email_with_attachment
+from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
 
 class PercentageFeeRunner(BaseJobRunner):
@@ -75,10 +75,10 @@ def run_percentage_fee(spark_session, glue_context, config, args):
         print("Error found while processing percentage fee for the below hotels.")
         for item in error_list:
             print(item)
-        send_email_with_attachment(notify_email, None, None,
+        send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of Percentage Fees failed for  hotel codes: {', '.join(error_list)}")
 
     else:
         print("No error found while processing percentage fees.")
-        send_email_with_attachment(notify_email, None, None,
+        send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of Percentage Fees Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .")
