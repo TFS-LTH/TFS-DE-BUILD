@@ -3,49 +3,51 @@ name: publish_lemontree_zip_to_s3
 on:
   push:
     branches:
-      - '**'
-#      - main
-#      - dev
-#      - feature/**
+      - '**'   # all branches
 
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Run Pytest
-      run: pytest src/main/test/tests/
+      - name: Run Pytest
+        run: pytest src/main/test/tests/
 
-    # Only runs if tests pass
-    - name: Get Safe Branch Name
-      run: |
-        SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
-        echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
+      - name: Get Safe Branch Name
+        run: |
+          SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
+          echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-    - name: Create ZIP with Branch Name
-      run: |
-        SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
-        ZIP_NAME="lemontree-${SAFE_BRANCH}.zip"
-        cd src/main/dev
-        zip -r "../../../$ZIP_NAME" . -x "*.git*" "*.venv*" "__pycache__/*"
-        echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+      - name: Create ZIP with Branch Name
+        run: |
+          ZIP_NAME="lemontree-${SAFE_BRANCH}.zip"
+          cd src/main/dev
+          zip -r "../../../$ZIP_NAME" . -x "*.git*" "*.venv*" "__pycache__/*"
+          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
-    - name: Upload ZIP to S3
-      run: aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree/playground/pnl/artifact/$ZIP_NAME"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ap-south-1
+      - name: Upload ZIP to S3
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "Uploading to production bucket"
+            aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/production/$ZIP_NAME"
+          else
+            echo "Uploading to development bucket"
+            aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/development/$ZIP_NAME"
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
