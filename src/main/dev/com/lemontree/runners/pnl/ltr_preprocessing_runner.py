@@ -114,18 +114,16 @@ def run_ltr(spark_session, glue_context, config, args):
 
     ##################################################### ZIPS OF LTR ##############################################################
 
-    import boto3
-    import zipfile
-    import io
-
     print('###################### START: Processing ZIP of LTR files ######################')
 
     bucket_name = config.get("bucket_name").replace("s3://", "")
-    output_prefix = config.get("output_path").rstrip("/") + "/"
+    output_prefix = config.get("output_path") + "/"
     zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
+    local_zip_file = f"{month_name}_LTR.zip"
 
     print(f"Output Prefix      : {output_prefix}")
     print(f"Target ZIP Key     : {zip_output_key}")
+    print(f"local_zip_file     : {local_zip_file}")
 
     # Initialize S3 client
     s3_client = boto3.client('s3')
@@ -137,6 +135,7 @@ def run_ltr(spark_session, glue_context, config, args):
     if not csv_keys:
         print("No CSV files found to zip.")
     else:
+        print(f"Found these CSV files to process: {csv_keys}")
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
@@ -150,17 +149,16 @@ def run_ltr(spark_session, glue_context, config, args):
 
         # Upload ZIP to S3
         s3_client.upload_fileobj(zip_buffer, bucket_name, zip_output_key)
-        print(f"✅ ZIP uploaded to: s3://{bucket_name}/{zip_output_key}")
+        print(f"ZIP uploaded to: s3://{bucket_name}/{zip_output_key}")
 
         # Step 4: Download the ZIP locally
-        local_zip_file = 'files.zip'
         s3_client.download_file(bucket_name, zip_output_key, local_zip_file)
 
         with open(local_zip_file, 'rb') as f_zip:
             zip_bytes = f_zip.read()
 
 
-    send_email_with_attachments(notify_email, None, None, zip_bytes, f"{month_name}_LTR.zip",
+    send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
                                f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .",
                                 "LTR Detailed Report")
 
