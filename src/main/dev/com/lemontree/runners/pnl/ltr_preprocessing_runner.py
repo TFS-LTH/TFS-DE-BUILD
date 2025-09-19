@@ -117,7 +117,7 @@ def run_ltr(spark_session, glue_context, config, args):
     print('###################### START: Processing ZIP of LTR files ######################')
 
     bucket_name = config.get("bucket_name").replace("s3://", "")
-    output_prefix = config.get("output_path") + "/"
+    output_prefix = config.get("output_path").strip("/") + "/"
     zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
     local_zip_file = f"{month_name}_ltr.zip"
 
@@ -130,16 +130,16 @@ def run_ltr(spark_session, glue_context, config, args):
 
     # List all CSV files in the output path
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=output_prefix)
-    csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.xlsx')]
+    xlsx_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.xlsx')]
 
-    if not csv_keys:
+    if not xlsx_keys:
         print("No xlsx files found to zip.")
     else:
-        print(f"Found these CSV files to process: {csv_keys}")
+        print(f"Found these xlsx_keys files to process: {xlsx_keys}")
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            for csv_key in csv_keys:
+            for csv_key in xlsx_keys:
                 s3_object = s3_client.get_object(Bucket=bucket_name, Key=csv_key)
                 csv_data = s3_object['Body'].read()
                 filename = csv_key.split('/')[-1]
