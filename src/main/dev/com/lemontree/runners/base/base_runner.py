@@ -14,7 +14,8 @@ class BaseJobRunner(ABC):
 
         # get job name
         self.job_name = self.args.get("job_name")
-        print(f"hotel_codes: " + self.args.get("hotel_codes"))
+        h = self.args.get("hotel_codes")
+        print(f"hotel_codes: {h}")
         if not self.job_name:
             raise ValueError("Missing required argument: 'job_name'")
 
