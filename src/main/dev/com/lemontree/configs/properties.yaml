@@ -12,16 +12,13 @@ tb:
 percentage_fee:
   mapping_file: /input_files/pnl/mapping_files/percentage_fees.xlsx
   output_path: /output_files/pnl/percentage_fees
-  tb_file_path: /input_files/pnl/tb_update/tb_warehouse
 
 ltr:
-  tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   mapping_file: /input_files/pnl/mapping_files/hotel_code_to_ltr_mapping.csv
   portel_bucket_name: s3://protel-data
   output_path: /output_files/pnl/ltr
 
 operational_data:
-  tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   dbr_bucket: s3://lemontree-dashboards
   back_up_operational_data_path: /archive/pnl/operational_data
   budget_file: /output_files/budget/cummulative_budget_file_2025_2026.csv

@@ -1,5 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
+from com.lemontree.utils.utils_helper_methods import get_managed_hotels
 import pandas as pd
 from datetime import datetime, timedelta
 from pyspark.sql import functions as F
@@ -21,7 +21,6 @@ def run_operational_data(spark_session, glue_context, config, args):
     print("Running operational_data pipeline...")
 
     update_month = args.get('update_month', '').strip()
-    tb_file_path = config.get("tb_file_path")
     hotel_codes = args.get('hotel_codes')
 
     # s3_bucket_name = 'ltree-softsensor-dashboards'
@@ -165,7 +164,7 @@ def run_operational_data(spark_session, glue_context, config, args):
                         f'Jan-{future_year_yy}', f'Feb-{future_year_yy}', f'Mar-{future_year_yy}']
     error_list = []
 
-    managed_hotels = get_managed_hotels_from_tb(tb_file_path, hotel_codes)
+    managed_hotels = get_managed_hotels(hotel_codes)
 
     for code in managed_hotels:
         # read the tb data for the month to get the hotel codes

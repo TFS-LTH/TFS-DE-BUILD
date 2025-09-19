@@ -236,14 +236,12 @@ def calculate_week_number_dynamic_year(current_date):
         return week_num
 
 
-def get_managed_hotels_from_tb(tb_file_path: str, hotel_codes: str = None) -> list:
+def get_managed_hotels(hotel_codes: str = None) -> list:
 
     # Read the TB data for the month to get the hotel codes
     if hotel_codes and hotel_codes.strip():
         managed_hotels = [i.strip() for i in hotel_codes.split(",")]
     else:
-        # tb_full = read_tb_file(tb_file_path)
-        # managed_hotels = tb_full['Abbrevation'].dropna().tolist()
         managed_hotels = hotel_list
 
     print(f"Hotels considered for running: {managed_hotels}")

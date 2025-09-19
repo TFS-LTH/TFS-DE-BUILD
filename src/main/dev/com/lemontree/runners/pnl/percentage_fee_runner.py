@@ -1,5 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
+from com.lemontree.utils.utils_helper_methods import get_managed_hotels
 from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
 
@@ -15,7 +15,6 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     bucket_name = config.get("bucket_name")
     mapping_file = config.get("mapping_file")
     output_path = config.get("output_path")
-    tb_file_path = bucket_name + config.get("tb_file_path")
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
 
@@ -25,6 +24,9 @@ def run_percentage_fee(spark_session, glue_context, config, args):
 
     print(f"percentage_fee_look_up_path: {percentage_fee_look_up_path}")
     print(f"full_output_path: {full_output_path}")
+    print(f"bucket_name: {bucket_name}")
+    print(f"mapping_file: {mapping_file}")
+    print(f"hotel_codes: {hotel_codes}")
 
     # percentage lookup file
     percentage_fee = pd.read_excel(percentage_fee_look_up_path,  header=1)
@@ -44,7 +46,7 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     error_list = []
 
     # read the tb data for the month to get the hotel codes
-    managed_hotels = get_managed_hotels_from_tb(tb_file_path, hotel_codes)
+    managed_hotels = get_managed_hotels(hotel_codes)
     for code in managed_hotels:
         try:
             print(f'running percentage_fee for {code}')
