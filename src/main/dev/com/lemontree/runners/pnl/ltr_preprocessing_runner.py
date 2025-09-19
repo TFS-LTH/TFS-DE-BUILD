@@ -117,7 +117,7 @@ def run_ltr(spark_session, glue_context, config, args):
     print(' ############################### start processing ZIPS OF LTR ############################### ')
 
     output_path_only = config.get("output_path") + "/"
-    zip_output_key = f"{output_path_only}/{month_name}_ltr.zip"
+    zip_output_key = f"{output_path_only}{month_name}_ltr.zip"
 
     print(f"output_path_only: {output_path_only}")
     print(f"zip_output_key: {zip_output_key}")
@@ -146,7 +146,7 @@ def run_ltr(spark_session, glue_context, config, args):
 
     # Upload the ZIP file to S3
     s3_client.upload_fileobj(zip_buffer, bucket_name.replace("s3://", ""), zip_output_key)
-    print(f"ZIP file uploaded to {bucket_name}/{zip_output_key}")
+    print(f"ZIP file uploaded to {bucket_name}{zip_output_key}")
 
     # read and send email with attachment
     with open('files.zip', 'rb') as f_zip:
