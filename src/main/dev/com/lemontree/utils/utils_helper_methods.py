@@ -243,6 +243,8 @@ def get_managed_hotels_from_tb(tb_file_path: str, hotel_codes: str = None) -> li
     else:
         managed_hotels = tb_full['Abbrevation'].dropna().tolist()
 
+    print(f"Hotels considered for running: {managed_hotels}")
+
     return managed_hotels
 
 
