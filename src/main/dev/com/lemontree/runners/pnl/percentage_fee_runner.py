@@ -15,7 +15,7 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     bucket_name = config.get("bucket_name")
     mapping_file = config.get("mapping_file")
     output_path = config.get("output_path")
-    tb_file_path = config.get("tb_file_path")
+    tb_file_path = bucket_name + config.get("tb_file_path")
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
 
