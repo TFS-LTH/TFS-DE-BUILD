@@ -11,8 +11,7 @@ tb:
 
 percentage_fee:
   mapping_file: /input_files/pnl/mapping_files/percentage_fees.xlsx
-  parquet_output_path: /output_files/pnl/percentage_fees/parquet_files
-  excel_output_path: /output_files/pnl/percentage_fees/excel_files
+  output_path: /output_files/pnl/percentage_fees
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
 
 ltr:

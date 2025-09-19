@@ -14,20 +14,17 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     # get all the variable values from config
     bucket_name = config.get("bucket_name")
     mapping_file = config.get("mapping_file")
-    parquet_output_path = config.get("parquet_output_path")
-    excel_output_path = config.get("excel_output_path")
+    output_path = config.get("output_path")
     tb_file_path = config.get("tb_file_path")
     notify_email = config.get("notify_email")
     hotel_codes = args['hotel_codes']
 
     # pre-pare the file paths
     percentage_fee_look_up_path = f"{bucket_name}{mapping_file}"
-    full_parquet_output_path = f"{bucket_name}/{parquet_output_path}"
-    full_excel_output_path = f"{bucket_name}/{excel_output_path}"
+    full_output_path = f"{bucket_name}/{output_path}"
 
     print(f"percentage_fee_look_up_path: {percentage_fee_look_up_path}")
-    print(f"full_parquet_output_path: {full_parquet_output_path}")
-    print(f"full_excel_output_path: {full_excel_output_path}")
+    print(f"full_output_path: {full_output_path}")
 
     # percentage lookup file
     percentage_fee = pd.read_excel(percentage_fee_look_up_path,  header=1)
@@ -64,13 +61,13 @@ def run_percentage_fee(spark_session, glue_context, config, args):
                 lambda row: '' if row['Particulars'] == 'Incentive Fees: ' else row['Percentage'], axis=1)
 
             # write in parquet
-            per_t.to_parquet(f'{full_parquet_output_path}/{code}_percentage_fees.parquet')
+            per_t.to_parquet(f'{full_output_path}/{code}_percentage_fees.parquet')
 
             # Create the Excel file name for the final_tb
             excel_file_name = f'{code}_percentage_fees.xlsx'
-            per_t.to_excel(f'{full_excel_output_path}/{excel_file_name}' , index=False, sheet_name=f'{code}')
+            per_t.to_excel(f'{full_output_path}/{excel_file_name}' , index=False, sheet_name=f'{code}')
 
-            print(f"Excel file successfully uploaded to {full_excel_output_path}/{excel_file_name}")
+            print(f"Excel file successfully uploaded to {full_output_path}/{excel_file_name}")
         except Exception as e:
             print(f"Error processing percentage fee for hotel_code - {code}: {e}")
             error_list.append(code)
