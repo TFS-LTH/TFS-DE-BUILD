@@ -154,11 +154,11 @@ def run_ltr(spark_session, glue_context, config, args):
         zip_buffer.seek(0)
 
         # Upload ZIP to S3
-        s3_client.upload_fileobj(zip_buffer, bucket_name, zip_output_key)
-        print(f"ZIP uploaded to: s3://{bucket_name}/{zip_output_key}")
+        s3_client.upload_fileobj(zip_buffer, bucket_nm, zip_output_key)
+        print(f"ZIP uploaded to: s3://{bucket_nm}/{zip_output_key}")
 
         # Step 4: Download the ZIP locally
-        s3_client.download_file(bucket_name, zip_output_key, local_zip_file)
+        s3_client.download_file(bucket_nm, zip_output_key, local_zip_file)
 
         with open(local_zip_file, 'rb') as f_zip:
             zip_bytes = f_zip.read()
