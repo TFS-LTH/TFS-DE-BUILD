@@ -7,8 +7,7 @@ tb:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   tb_source_path: s3://lemontree-datalake-raw-production/CENTRAL/alif-data
   back_up_tb_path: /archive/pnl/tb_update
-  compiled_tb_path: /input_files/pnl/tb_update/compiled_tbs
-  parquet_output_path: /output_files/pnl/tb_actuals/parquet_files
+  output_path: /output_files/pnl/tb_actuals/
 
 percentage_fee:
   mapping_file: /input_files/pnl/mapping_file/percentage_fees.xlsx

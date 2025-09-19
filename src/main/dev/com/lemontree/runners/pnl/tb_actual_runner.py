@@ -28,8 +28,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
     tb_source_path = bucket_name + config.get("tb_source_path")
     tb_file_path = bucket_name + config.get("tb_file_path")
     fsli_path = bucket_name + config.get("flsi_mapping_path")
-    complied_tb_path = bucket_name + config.get("complied_tb_path")
-    parquet_output_path = bucket_name + config.get("parquet_output_path")
+    output_path = bucket_name + config.get("output_path")
     notify_email = config.get("notify_email")
 
     # Date handling
@@ -138,12 +137,12 @@ def run_tb_actual(spark_session, glue_context, config, args):
             final_tb.loc[special_mask, month_col] = final_tb.loc[special_mask, month_col].abs()
 
             # Taking last month Tb and then merging with current TB
-            complied_tb_file_name = complied_tb_path + f'/{code}.xlsx'
+            complied_tb_file_name = output_path + f'/{code}_tb_actuals.xlsx'
             print(f'reading file: {complied_tb_file_name}')
 
             last_tb = pd.read_excel(complied_tb_file_name)
             # keep a backup to this directory
-            complete_backup_path = backup_path + f'/{code}.xlsx'
+            complete_backup_path = backup_path + f'/{code}_tb_actuals.xlsx'
             last_tb.to_excel(complete_backup_path, index=False, sheet_name=f'{code}')
             print(f'Back up created at : {complete_backup_path}')
 
@@ -188,14 +187,13 @@ def run_tb_actual(spark_session, glue_context, config, args):
             resulted_tb[fillna_columns] = resulted_tb[fillna_columns].fillna(0)
 
             # save this in parquet file as lambda jobs are set to pull this files.
-            resulted_tb.to_parquet(parquet_output_path + f'/{code}_tb_actuals.parquet')
+            # resulted_tb.to_parquet(parquet_output_path + f'/{code}_tb_actuals.parquet')
 
             # Create the Excel file name for the final_tb
-            excel_file_name = f'/{code}.xlsx'
-
+            final_file_path = f'{output_path}/{code}_tb_actuals.xlsx'
             # Save the final_tb DataFrame to an Excel file in memory
-            resulted_tb.to_excel(complied_tb_path + excel_file_name, index=False, sheet_name=f'{code}')
-            print(f"Excel file successfully saved to {complied_tb_path + excel_file_name}")
+            resulted_tb.to_excel(final_file_path, index=False, sheet_name=f'{code}')
+            print(f"Excel file successfully saved to {final_file_path}")
 
         except Exception as e:
             print(f"Error found while processing tb for hotel_code: {code}. Error: ", e)
