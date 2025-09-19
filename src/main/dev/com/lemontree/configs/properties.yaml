@@ -1,6 +1,6 @@
 common_configs:
   bucket_name: s3://tfs-lemontree-de
-  notify_email: sde1_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com
+  notify_email: sde1_tfs@lemontreehotels.com
   flsi_mapping_path: /input_files/pnl/mapping_files/fsli_mapping.xlsx
 
 tb:

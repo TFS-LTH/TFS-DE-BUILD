@@ -28,13 +28,25 @@ def run_ltr(spark_session, glue_context, config, args):
     print(f"month_name: {month_name}")
     print(f"year_ltr: {year_ltr}")
 
+    # Initialize S3 client
+    s3_client = boto3.client('s3')
+
     bucket_name = config.get("bucket_name")
     portel_bucket_name = config.get("portel_bucket_name")
+    bucket_nm = config.get("bucket_name").replace("s3://", "")
+    output_prefix = config.get("output_path").strip("/") + "/"
+    suffix = '_ltr.xlsx'
+    zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
+    local_zip_file = f"{month_name}_ltr.zip"
 
     mapping_file = bucket_name + config.get("mapping_file")
     output_path = bucket_name + config.get("output_path")
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
+
+    print(f"Output Prefix      : {output_prefix}")
+    print(f"Target ZIP Key     : {zip_output_key}")
+    print(f"local_zip_file     : {local_zip_file}")
 
     #destination_file_path = f"{output_path}/year={year_ltr}/month={month_ltr}"
 
@@ -42,8 +54,6 @@ def run_ltr(spark_session, glue_context, config, args):
 
     # read the tb data for the month to get the hotel codes
     managed_hotels = get_managed_hotels(hotel_codes)
-    # Initialize the final DataFrame before your loop
-    ltr_final = pd.DataFrame(columns=['Hotel Code', 'Total Room Revenue'])
     error_list = []
     for hotel in managed_hotels:
         # Extract the hotel code
@@ -77,20 +87,7 @@ def run_ltr(spark_session, glue_context, config, args):
         try:
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
-            df.to_excel(f'{output_path}/{hotel_code}_ltr.xlsx', index=False)
-
-            # LTR - to finance
-            ltr = pd.read_excel(f'{output_path}/{hotel_code}_ltr.xlsx')
-
-            # Calculate the sum of "Total Room Revenue"
-            total_revenue = ltr['Total Room Revenue'].sum()
-
-            # Append the result to the final DataFrame
-            new_row = pd.DataFrame([{
-                'Hotel Code': hotel_code,
-                'Total Room Revenue': total_revenue
-            }])
-            ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
+            df.to_excel(f'{output_path}/{hotel_code}{suffix}', index=False)
 
             print(f"Processed for hotel_code: {hotel_code}")
 
@@ -107,40 +104,49 @@ def run_ltr(spark_session, glue_context, config, args):
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}", "LTR Pnl JOB")
     else:
         print("Processing completed without any errors.")
-        ltr_final.to_excel(f'{output_path}/{month_name}_ltr.xlsx', index=False)
-        print(f"File saved: {output_path}/{month_name}_ltr.xlsx")
+
 
     print(' ############################### end processing LTR PER PROCESSING ############################### ')
 
-    ##################################################### ZIPS OF LTR ##############################################################
+    # Initialize the final DataFrame before your loop
+    ltr_final = pd.DataFrame(columns=['Hotel Code', 'Total Room Revenue'])
 
-    print('###################### START: Processing ZIP of LTR files ######################')
-
-    bucket_name = config.get("bucket_name").replace("s3://", "")
-    output_prefix = config.get("output_path").strip("/") + "/"
-    zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
-    local_zip_file = f"{month_name}_ltr.zip"
-
-    print(f"Output Prefix      : {output_prefix}")
-    print(f"Target ZIP Key     : {zip_output_key}")
-    print(f"local_zip_file     : {local_zip_file}")
-
-    # Initialize S3 client
-    s3_client = boto3.client('s3')
-
-    # List all CSV files in the output path
-    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=output_prefix)
+    # List all xlsx files in the output path
+    response = s3_client.list_objects_v2(Bucket=bucket_nm, Prefix=output_prefix)
     xlsx_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.xlsx')]
 
     if not xlsx_keys:
         print("No xlsx files found to zip.")
     else:
         print(f"Found these xlsx_keys files to process: {xlsx_keys}")
+        for file_key in xlsx_keys:
+            print(f"Reading {file_key}...")
+            obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+
+            ltr = pd.read_excel(io.BytesIO(obj['Body'].read()))
+            print(ltr.head())
+            print(f"file_key: {file_key}")
+
+            # Calculate the sum of "Total Room Revenue"
+            total_revenue = ltr['Total Room Revenue'].sum()
+
+            # Append the result to the final DataFrame
+            new_row = pd.DataFrame([{
+                'Hotel Code': file_key.split(suffix)[0],
+                'Total Room Revenue': total_revenue
+            }])
+            ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
+
+        ltr_final.to_excel(f'{output_path}/{month_name}_ltr.xlsx', index=False)
+        print(f"File saved: {output_path}/{month_name}_ltr.xlsx")
+
+        print('###################### START: Processing ZIP of LTR files ######################')
+
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             for xlsx_key in xlsx_keys:
-                s3_object = s3_client.get_object(Bucket=bucket_name, Key=xlsx_key)
+                s3_object = s3_client.get_object(Bucket=bucket_nm, Key=xlsx_key)
                 csv_data = s3_object['Body'].read()
                 filename = xlsx_key.split('/')[-1]
                 zip_file.writestr(filename, csv_data)
