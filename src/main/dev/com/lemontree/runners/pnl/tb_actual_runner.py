@@ -25,7 +25,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
     # get all the variable values from config
     bucket_name = config.get("bucket_name")
     back_up_tb_path = bucket_name + config.get("back_up_tb_path")
-    tb_source_path = bucket_name + config.get("tb_source_path")
+    tb_source_path = config.get("tb_source_path")
     tb_file_path = bucket_name + config.get("tb_file_path")
     fsli_path = bucket_name + config.get("flsi_mapping_path")
     output_path = bucket_name + config.get("output_path")
