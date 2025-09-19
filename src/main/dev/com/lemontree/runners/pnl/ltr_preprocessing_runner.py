@@ -114,45 +114,51 @@ def run_ltr(spark_session, glue_context, config, args):
 
     ##################################################### ZIPS OF LTR ##############################################################
 
-    print(' ############################### start processing ZIPS OF LTR ############################### ')
+    import boto3
+    import zipfile
+    import io
 
-    output_path_only = config.get("output_path") + "/"
-    zip_output_key = f"{output_path_only}{month_name}_ltr.zip"
+    print('###################### START: Processing ZIP of LTR files ######################')
 
-    print(f"output_path_only: {output_path_only}")
-    print(f"zip_output_key: {zip_output_key}")
+    bucket_name = config.get("bucket_name").replace("s3://", "")
+    output_prefix = config.get("output_path").rstrip("/") + "/"
+    zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
 
-    # List all CSV files in the given prefix
+    print(f"Output Prefix      : {output_prefix}")
+    print(f"Target ZIP Key     : {zip_output_key}")
+
+    # Initialize S3 client
     s3_client = boto3.client('s3')
-    response = s3_client.list_objects_v2(Bucket=bucket_name.replace("s3://", ""), Prefix=output_path_only)
+
+    # List all CSV files in the output path
+    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=output_prefix)
     csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.csv')]
 
-    # Create an in-memory zip file
-    zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-        for csv_key in csv_keys:
-            # Get the file object from S3
-            s3_object = s3_client.get_object(Bucket=bucket_name.replace("s3://", ""), Key=csv_key)
-            csv_data = s3_object['Body'].read()
+    if not csv_keys:
+        print("No CSV files found to zip.")
+    else:
+        # Create an in-memory ZIP file
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for csv_key in csv_keys:
+                s3_object = s3_client.get_object(Bucket=bucket_name, Key=csv_key)
+                csv_data = s3_object['Body'].read()
+                filename = csv_key.split('/')[-1]
+                zip_file.writestr(filename, csv_data)
 
-            # Extract file name from full S3 key
-            filename = csv_key.split('/')[-1]
+        zip_buffer.seek(0)
 
-            # Add to zip
-            zip_file.writestr(filename, csv_data)
+        # Upload ZIP to S3
+        s3_client.upload_fileobj(zip_buffer, bucket_name, zip_output_key)
+        print(f"✅ ZIP uploaded to: s3://{bucket_name}/{zip_output_key}")
 
-    # Seek to the beginning of the BytesIO buffer
-    zip_buffer.seek(0)
+        # Step 4: Download the ZIP locally
+        local_zip_file = 'files.zip'
+        s3_client.download_file(bucket_name, zip_output_key, local_zip_file)
 
-    # Upload the ZIP file to S3
-    s3_client.upload_fileobj(zip_buffer, bucket_name.replace("s3://", ""), zip_output_key)
-    print(f"ZIP file uploaded to {bucket_name}{zip_output_key}")
+        with open(local_zip_file, 'rb') as f_zip:
+            zip_bytes = f_zip.read()
 
-    # Download file from S3
-    s3_client.download_file(bucket_name.replace("s3://", ""), zip_output_key, 'files.zip')
-    # read and send email with attachment
-    with open('files.zip', 'rb') as f_zip:
-        zip_bytes = f_zip.read()
 
     send_email_with_attachments(notify_email, None, None, zip_bytes, f"{month_name}_LTR.zip",
                                f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .",
