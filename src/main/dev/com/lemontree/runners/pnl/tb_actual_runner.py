@@ -87,6 +87,8 @@ def run_tb_actual(spark_session, glue_context, config, args):
     tb_full = pd.read_csv(tb_path, encoding='ISO-8859-1')
     print(tb_full.columns.tolist())
     print(tb_full.head())
+    # Clean column names by stripping whitespace
+    tb_full.columns = tb_full.columns.str.strip()
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMB', 'LTHMB1')
 
