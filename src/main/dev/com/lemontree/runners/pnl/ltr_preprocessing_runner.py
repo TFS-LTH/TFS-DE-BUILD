@@ -140,10 +140,18 @@ def run_ltr(spark_session, glue_context, config, args):
 
         print('###################### START: Processing ZIP of LTR files ######################')
 
+    # List all xlsx files in the output path along with cumulative ltrs
+    response_cumulative = s3_client.list_objects_v2(Bucket=bucket_nm, Prefix=output_prefix)
+    all_keys = [obj['Key'] for obj in response_cumulative.get('Contents', []) if obj['Key'].endswith('.xlsx')]
+
+    if not all_keys:
+        print("No xlsx files found to zip.")
+    else:
+        print(f"Found these xlsx_keys files to process: {all_keys}")
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            for xlsx_key in xlsx_keys:
+            for xlsx_key in all_keys:
                 s3_object = s3_client.get_object(Bucket=bucket_nm, Key=xlsx_key)
                 csv_data = s3_object['Body'].read()
                 filename = xlsx_key.split('/')[-1]
