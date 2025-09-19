@@ -13,6 +13,7 @@ class LtrPreprocessingRunner(BaseJobRunner):
         run_ltr(spark_session, glue_context, self.config, args)
 
 def run_ltr(spark_session, glue_context, config, args):
+    global ltr_final
     print("Running LTR pipeline...")
 
     first_day_of_current_month = datetime.now().replace(day=1)
@@ -35,9 +36,7 @@ def run_ltr(spark_session, glue_context, config, args):
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
 
-    destination_file_path = f"{output_path}/year={year_ltr}/month={month_ltr}"
-
-    print(f"destination_file_path: {destination_file_path}")
+    #destination_file_path = f"{output_path}/year={year_ltr}/month={month_ltr}"
 
     print(' ############################### start processing LTR PER PROCESSING ############################### ')
 
@@ -74,17 +73,25 @@ def run_ltr(spark_session, glue_context, config, args):
         print(f'Processing ltr_mapping_file: {ltr_file_path}')
 
         try:
+
+            # Initialize the final DataFrame before your loop
+            ltr_final = pd.DataFrame(columns=['Hotel Code', 'Total Room Revenue'])
+
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
-            df.to_excel(f'{destination_file_path}/{hotel_code}_ltr.xlsx', index=False)
+            df.to_excel(f'{output_path}/{hotel_code}_ltr.xlsx', index=False)
 
             # LTR - to finance
-            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}_ltr.xlsx')
+            ltr = pd.read_excel(f'{output_path}/{hotel_code}_ltr.xlsx')
+
             # Calculate the sum of "Total Room Revenue"
             total_revenue = ltr['Total Room Revenue'].sum()
 
-            # Append the result to the DataFrame
-            new_row = pd.DataFrame([{'Hotel Code': hotel_code, 'Total Room Revenue': total_revenue}])
+            # Append the result to the final DataFrame
+            new_row = pd.DataFrame([{
+                'Hotel Code': hotel_code,
+                'Total Room Revenue': total_revenue
+            }])
             ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
 
             print(f"Processed for hotel_code: {hotel_code}")
@@ -102,8 +109,8 @@ def run_ltr(spark_session, glue_context, config, args):
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}", "LTR Pnl JOB")
     else:
         print("Processing completed without any errors.")
-        ltr_final.to_excel(f'{destination_file_path}/{month_name}_ltr.xlsx', index=False)
-        print(f"File saved: {destination_file_path}/{month_name}_ltr.xlsx")
+        ltr_final.to_excel(f'{output_path}/{month_name}_ltr.xlsx', index=False)
+        print(f"File saved: {output_path}/{month_name}_ltr.xlsx")
 
     print(' ############################### end processing LTR PER PROCESSING ############################### ')
 
@@ -111,13 +118,15 @@ def run_ltr(spark_session, glue_context, config, args):
 
     print(' ############################### start processing ZIPS OF LTR ############################### ')
 
-    output_path = config.get("output_path").replace("s3://", "")
-    csv_folder_prefix = f"{output_path}/year={year_ltr}/month={month_ltr}/"
-    zip_output_key = f"{output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
+    output_path_only = config.get("output_path") + "/"
+    zip_output_key = f"{output_path_only}/{month_name}_ltr.zip"
+
+    print(f"output_path_only: {output_path_only}")
+    print(f"zip_output_key: {zip_output_key}")
 
     # List all CSV files in the given prefix
     s3_client = boto3.client('s3')
-    response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=csv_folder_prefix)
+    response = s3_client.list_objects_v2(Bucket=bucket_name.replace("s3://", ""), Prefix=output_path_only)
     csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.csv')]
 
     # Create an in-memory zip file
@@ -125,7 +134,7 @@ def run_ltr(spark_session, glue_context, config, args):
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         for csv_key in csv_keys:
             # Get the file object from S3
-            s3_object = s3_client.get_object(Bucket=bucket_name, Key=csv_key)
+            s3_object = s3_client.get_object(Bucket=bucket_name.replace("s3://", ""), Key=csv_key)
             csv_data = s3_object['Body'].read()
 
             # Extract file name from full S3 key
