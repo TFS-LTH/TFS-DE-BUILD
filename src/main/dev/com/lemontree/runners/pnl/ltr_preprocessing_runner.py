@@ -157,8 +157,7 @@ def run_ltr(spark_session, glue_context, config, args):
         with open(local_zip_file, 'rb') as f_zip:
             zip_bytes = f_zip.read()
 
-
-    send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
+        send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
                                f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .",
                                 "LTR Detailed Report")
 
