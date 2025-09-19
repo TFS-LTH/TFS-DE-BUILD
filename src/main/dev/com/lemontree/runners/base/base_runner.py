@@ -12,12 +12,8 @@ class BaseJobRunner(ABC):
         self.args = args
         self.logger = logging.getLogger(self.__class__.__name__)
 
-        print(f'args: {args}')
-
         # get job name
         self.job_name = self.args.get("job_name")
-        h = self.args.get("hotel_codes")
-        print(f"hotel_codes: {h}")
         if not self.job_name:
             raise ValueError("Missing required argument: 'job_name'")
 
