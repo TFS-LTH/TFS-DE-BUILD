@@ -5,11 +5,11 @@ from email.mime.application import MIMEApplication
 
 ses_client = boto3.client('ses', region_name='ap-south-1')
 
-def send_email_with_attachments(notify_email_addresses, pdf_content, pdf_filename, zip_content, zip_filename, attached_message):
+def send_email_with_attachments(notify_email_addresses, pdf_content, pdf_filename, zip_content, zip_filename, attached_message, subject):
     msg = MIMEMultipart()
     msg['From'] = 'ltdt@lemontreehotels.com'
     msg['To'] = notify_email_addresses
-    msg['Subject'] = f'SUBJECT'
+    msg['Subject'] = f'{subject}'
 
     body = f"""
     <html>

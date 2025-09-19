@@ -382,4 +382,5 @@ def run_operational_data(spark_session, glue_context, config, args):
     print('##################################### Operational Budget END #######################################')
 
     send_email_with_attachments(notify_email, None, None, None, None,
-                                f"Processing of Operational Actuals and Budget was successful for hotel codes: {', '.join(managed_hotels)}")
+                                f"Processing of Operational Actuals and Budget was successful for hotel codes: {', '.join(managed_hotels)}",
+                                "Operational Budget Job")

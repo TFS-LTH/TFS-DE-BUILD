@@ -80,9 +80,9 @@ def run_percentage_fee(spark_session, glue_context, config, args):
         for item in error_list:
             print(item)
         send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of Percentage Fees failed for  hotel codes: {', '.join(error_list)}")
+                                   f"Processing of Percentage Fees failed for  hotel codes: {', '.join(error_list)}", "Percentage Fee Job")
 
     else:
         print("No error found while processing percentage fees.")
         send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of Percentage Fees Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .")
+                                   f"Processing of Percentage Fees Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .", "Percentage Fee Job")

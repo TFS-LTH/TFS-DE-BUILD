@@ -102,13 +102,13 @@ def run_ltr(spark_session, glue_context, config, args):
             print(item)
 
         send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}")
+                                   f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}", "LTR Pnl JOB")
     else:
         print("Processing completed without any errors.")
         ltr_final.to_csv(f'{destination_file_path_csv}/{month_name}_ltr.csv', index=False)
 
         send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .")
+                                   f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .", "LTR Pnl JOB")
 
     print(' ############################### end processing LTR PER PROCESSING ############################### ')
 
@@ -150,6 +150,6 @@ def run_ltr(spark_session, glue_context, config, args):
         zip_bytes = f_zip.read()
 
     send_email_with_attachments(notify_email, None, None, zip_bytes, f"{month_name}_LTR.zip",
-                               f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .")
+                               f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .", "ZIP of LTR JOB")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')
