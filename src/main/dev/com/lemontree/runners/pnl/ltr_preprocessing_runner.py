@@ -121,7 +121,7 @@ def run_ltr(spark_session, glue_context, config, args):
         print(f"Found these xlsx_keys files to process: {xlsx_keys}")
         for file_key in xlsx_keys:
             print(f"Reading {file_key}...")
-            obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
+            obj = s3_client.get_object(Bucket=bucket_nm, Key=file_key)
 
             ltr = pd.read_excel(io.BytesIO(obj['Body'].read()))
             print(ltr.head())
