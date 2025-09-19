@@ -137,8 +137,8 @@ def run_ltr(spark_session, glue_context, config, args):
             }])
             ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
 
-        ltr_final.to_excel(f'{output_path}/{month_name}_ltr.xlsx', index=False)
-        print(f"File saved: {output_path}/{month_name}_ltr.xlsx")
+        ltr_final.to_excel(f'{output_path}/{month_name}_cumulative_ltrs.xlsx', index=False)
+        print(f"File saved: {output_path}/{month_name}_cumulative_ltrs.xlsx")
 
         print('###################### START: Processing ZIP of LTR files ######################')
 
