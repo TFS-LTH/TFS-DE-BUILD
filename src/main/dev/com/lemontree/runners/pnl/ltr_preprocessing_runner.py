@@ -42,6 +42,8 @@ def run_ltr(spark_session, glue_context, config, args):
 
     # read the tb data for the month to get the hotel codes
     managed_hotels = get_managed_hotels(hotel_codes)
+    # Initialize the final DataFrame before your loop
+    ltr_final = pd.DataFrame(columns=['Hotel Code', 'Total Room Revenue'])
     error_list = []
     for hotel in managed_hotels:
         # Extract the hotel code
@@ -73,10 +75,6 @@ def run_ltr(spark_session, glue_context, config, args):
         print(f'Processing ltr_mapping_file: {ltr_file_path}')
 
         try:
-
-            # Initialize the final DataFrame before your loop
-            ltr_final = pd.DataFrame(columns=['Hotel Code', 'Total Room Revenue'])
-
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
             df.to_excel(f'{output_path}/{hotel_code}_ltr.xlsx', index=False)
