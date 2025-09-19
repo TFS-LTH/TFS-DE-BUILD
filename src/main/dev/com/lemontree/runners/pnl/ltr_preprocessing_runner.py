@@ -60,7 +60,7 @@ def run_ltr(spark_session, glue_context, config, args):
             hotel_code = "LTPAH1"
 
         ltr_mapping_df = pd.read_csv(mapping_file, delimiter=',')
-        ltr_mapping_dict = dict(zip(ltr_mapping_df['code'], ltr_mapping_df['hotel_name']))
+        ltr_mapping_dict = dict(zip(ltr_mapping_df['hotel_code'], ltr_mapping_df['hotel_name']))
 
         ltr_hotel_name = ltr_mapping_dict[hotel]
         ltr_file_name = f"{ltr_hotel_name}_{first_day_formatted}.csv"
