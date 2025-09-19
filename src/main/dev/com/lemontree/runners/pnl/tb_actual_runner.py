@@ -1,5 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_helper_methods import get_managed_hotels
+from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
 from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
 from datetime import datetime, timedelta
@@ -85,10 +85,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
     tb.to_csv(tb_path, index=False)
 
     tb_full = pd.read_csv(tb_path, encoding='ISO-8859-1')
-    print(tb_full.columns.tolist())
-    print(tb_full.head())
     # Clean column names by stripping whitespace
-    tb_full.columns = tb_full.columns.str.strip()
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMB', 'LTHMB1')
 
@@ -104,7 +101,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
     error_list = []
 
     # read the tb data for the month to get the hotel codes
-    managed_hotels = get_managed_hotels(tb_path, hotel_codes)
+    managed_hotels = get_managed_hotels_from_tb(tb_path, hotel_codes)
     for code in managed_hotels:
         print("RUNNING FOR :  ", code, tb_path)
 

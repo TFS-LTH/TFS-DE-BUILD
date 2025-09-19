@@ -1,5 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_helper_methods import get_managed_hotels
+from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
 from com.lemontree.utils.utils_email import send_email_with_attachments
 from datetime import datetime, timedelta
 import io
@@ -49,7 +49,7 @@ def run_ltr(spark_session, glue_context, config, args):
     print(' ############################### start processing LTR PER PROCESSING ############################### ')
 
     # read the tb data for the month to get the hotel codes
-    managed_hotels = get_managed_hotels(tb_file_path, hotel_codes)
+    managed_hotels = get_managed_hotels_from_tb(tb_file_path, hotel_codes)
     error_list = []
     for hotel in managed_hotels:
         # Extract the hotel code
