@@ -17,7 +17,7 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     output_path = config.get("output_path")
     tb_file_path = config.get("tb_file_path")
     notify_email = config.get("notify_email")
-    hotel_codes = args['hotel_codes']
+    hotel_codes = args.get('hotel_codes')
 
     # pre-pare the file paths
     percentage_fee_look_up_path = f"{bucket_name}{mapping_file}"
@@ -81,5 +81,3 @@ def run_percentage_fee(spark_session, glue_context, config, args):
 
     else:
         print("No error found while processing percentage fees.")
-        send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of Percentage Fees Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .", "Percentage Fee Job")

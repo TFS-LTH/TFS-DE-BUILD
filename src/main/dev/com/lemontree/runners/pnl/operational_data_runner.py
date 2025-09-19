@@ -1,6 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
-from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
 from datetime import datetime, timedelta
 from pyspark.sql import functions as F
@@ -23,8 +22,7 @@ def run_operational_data(spark_session, glue_context, config, args):
 
     update_month = args.get('update_month', '').strip()
     tb_file_path = config.get("tb_file_path")
-    notify_email = config.get("notify_email")
-    hotel_codes = args['hotel_codes']
+    hotel_codes = args.get('hotel_codes')
 
     # s3_bucket_name = 'ltree-softsensor-dashboards'
     dbr_bucket = config.get("dbr_bucket")
@@ -380,7 +378,3 @@ def run_operational_data(spark_session, glue_context, config, args):
         budget_data.to_excel(operational_data_budget + excel_file_name, sheet_name=f'{code}', index=False)
 
     print('##################################### Operational Budget END #######################################')
-
-    send_email_with_attachments(notify_email, None, None, None, None,
-                                f"Processing of Operational Actuals and Budget was successful for hotel codes: {', '.join(managed_hotels)}",
-                                "Operational Budget Job")

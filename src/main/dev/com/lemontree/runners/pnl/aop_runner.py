@@ -587,6 +587,4 @@ def run_aop(spark_session, glue_context, config, args):
                                     f"Processing of AOP Budget failed for hotel codes: {', '.join(error_list)}", "AOP Pnl JOB")
     else:
         print("Processing completed without any errors.")
-        send_email_with_attachments(notify_email, None, None, None, None,
-                                    f"Processing of AOP Budget was successful for hotel codes: {', '.join(managed_hotels)}", "AOP Pnl JOB")
 

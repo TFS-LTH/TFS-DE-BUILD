@@ -212,11 +212,10 @@ def run_tb_actual(spark_session, glue_context, config, args):
             print(item)
 
         send_email_with_attachments(notify_email, None, None, None, None,
-                                    f"Processing of TB Actuals failed for  hotel codes: {', '.join(error_list)}")
+                                    f"Processing of TB Actuals failed for  hotel codes: {', '.join(error_list)}",
+                                    "TB Actuals Pnl Job")
 
     else:
         print('No Errors found')
-        send_email_with_attachments(notify_email, None, None, None, None,
-                                    f"Processing of TB Actuals was successful for hotel codes: {', '.join(managed_hotels)}")
 
 

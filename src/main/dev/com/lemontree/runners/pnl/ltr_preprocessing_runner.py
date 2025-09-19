@@ -34,7 +34,7 @@ def run_ltr(spark_session, glue_context, config, args):
     parquet_output_path = config.get("parquet_output_path")
     csv_output_path = config.get("csv_output_path")
     notify_email = config.get("notify_email")
-    hotel_codes = args['hotel_codes']
+    hotel_codes = args.get('hotel_codes')
 
     full_parquet_output_path = f"{bucket_name}/{parquet_output_path}"
     full_csv_output_path = f"{bucket_name}/{csv_output_path}"
@@ -150,6 +150,7 @@ def run_ltr(spark_session, glue_context, config, args):
         zip_bytes = f_zip.read()
 
     send_email_with_attachments(notify_email, None, None, zip_bytes, f"{month_name}_LTR.zip",
-                               f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .", "ZIP of LTR JOB")
+                               f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .",
+                                "LTR Detailed Report")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')
