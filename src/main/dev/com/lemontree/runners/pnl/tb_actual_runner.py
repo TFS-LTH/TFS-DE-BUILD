@@ -81,22 +81,10 @@ def run_tb_actual(spark_session, glue_context, config, args):
     tb_path_full = f'{tb_source_path}/{full_file_name}'
     print(f'tb_path_full : {tb_path_full}')
     # copy tb from source and pace in our warehouse
-    # tb = pd.read_csv(tb_path_full, encoding='ISO-8859-1', delimiter=',')
-    try:
-        tb = pd.read_csv(
-            tb_path_full,
-            encoding='ISO-8859-1',
-            delimiter=',',
-            quotechar='"',
-            skipinitialspace=True,
-            on_bad_lines='warn'  # or 'skip'
-        )
-    except pd.errors.ParserError as e:
-        print(f"ParserError while loading TB CSV: {e}")
-        raise
+    tb = pd.read_csv(tb_path_full, encoding='ISO-8859-1', header=2)
     tb.to_csv(tb_path, index=False)
 
-    tb_full = pd.read_csv(tb_path, header=2, encoding='ISO-8859-1')
+    tb_full = pd.read_csv(tb_path, encoding='ISO-8859-1')
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMB', 'LTHMB1')
 
