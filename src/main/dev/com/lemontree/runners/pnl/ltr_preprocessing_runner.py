@@ -111,7 +111,7 @@ def run_ltr(spark_session, glue_context, config, args):
 
     print(' ############################### start processing ZIPS OF LTR ############################### ')
 
-    output_path = config.get("output_path")
+    output_path = config.get("output_path").replace("s3://", "")
     csv_folder_prefix = f"{output_path}/year={year_ltr}/month={month_ltr}/"
     zip_output_key = f"{output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
 
