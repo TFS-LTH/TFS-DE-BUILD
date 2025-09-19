@@ -148,6 +148,8 @@ def run_ltr(spark_session, glue_context, config, args):
     s3_client.upload_fileobj(zip_buffer, bucket_name.replace("s3://", ""), zip_output_key)
     print(f"ZIP file uploaded to {bucket_name}{zip_output_key}")
 
+    # Download file from S3
+    s3_client.download_file(bucket_name.replace("s3://", ""), zip_output_key, 'files.zip')
     # read and send email with attachment
     with open('files.zip', 'rb') as f_zip:
         zip_bytes = f_zip.read()
