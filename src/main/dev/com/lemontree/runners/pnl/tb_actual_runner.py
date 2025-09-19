@@ -76,7 +76,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
 
     tb_full = pd.read_csv(tb_path, header=2, encoding='ISO-8859-1')
     tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
-
+    tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMB', 'LTHMB1')
 
     # Loading FSLI mapping
     fsli_mapping = pd.read_excel(fsli_path)
