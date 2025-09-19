@@ -1,5 +1,5 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb
+from com.lemontree.utils.utils_helper_methods import get_managed_hotels_from_tb, read_tb_file
 from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
 from datetime import datetime, timedelta
@@ -83,11 +83,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
     # copy tb from source and pace in our warehouse
     tb = pd.read_csv(tb_path_full, encoding='ISO-8859-1', header=2)
     tb.to_csv(tb_path, index=False)
-
-    tb_full = pd.read_csv(tb_path, encoding='ISO-8859-1')
-    # Clean column names by stripping whitespace
-    tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMBB', 'LTHMB2')
-    tb_full['Abbrevation'] = tb_full['Abbrevation'].replace('LTHMB', 'LTHMB1')
+    tb_full = read_tb_file(tb_path)
 
     # Loading FSLI mapping
     fsli_mapping = pd.read_excel(fsli_path)
