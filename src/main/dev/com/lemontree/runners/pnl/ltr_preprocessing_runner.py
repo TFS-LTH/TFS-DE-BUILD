@@ -139,10 +139,10 @@ def run_ltr(spark_session, glue_context, config, args):
         # Create an in-memory ZIP file
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            for csv_key in xlsx_keys:
-                s3_object = s3_client.get_object(Bucket=bucket_name, Key=csv_key)
+            for xlsx_key in xlsx_keys:
+                s3_object = s3_client.get_object(Bucket=bucket_name, Key=xlsx_key)
                 csv_data = s3_object['Body'].read()
-                filename = csv_key.split('/')[-1]
+                filename = xlsx_key.split('/')[-1]
                 zip_file.writestr(filename, csv_data)
 
         zip_buffer.seek(0)
