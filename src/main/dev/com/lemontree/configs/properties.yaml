@@ -1,7 +1,7 @@
 common_configs:
   bucket_name: s3://tfs-lemontree-de
   notify_email: sde1_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com
-  flsi_mapping_path: /input_files/pnl/mapping_file/fsli_mapping.xlsx
+  flsi_mapping_path: /input_files/pnl/mapping_files/fsli_mapping.xlsx
 
 tb:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
@@ -10,7 +10,7 @@ tb:
   output_path: /output_files/pnl/tb_actuals
 
 percentage_fee:
-  mapping_file: /input_files/pnl/mapping_file/percentage_fees.xlsx
+  mapping_file: /input_files/pnl/mapping_files/percentage_fees.xlsx
   parquet_output_path: /output_files/pnl/percentage_fees/parquet_files
   excel_output_path: /output_files/pnl/percentage_fees/excel_files
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
@@ -31,8 +31,8 @@ operational_data:
   operational_data_budget: /output_files/pnl/operational_data_budget
 
 aop:
-  expense_mapping: /input_files/pnl/mapping_file/expense_mapping.xlsx
-  income_mapping: /input_files/pnl/mapping_file/income_mapping.xlsx
+  expense_mapping: /input_files/pnl/mapping_files/expense_mapping.xlsx
+  income_mapping: /input_files/pnl/mapping_files/income_mapping.xlsx
   gl_level_budget_path: /output_files/pnl/gl_level_budget
   back_up_gl_level_budget_path: /archive/pnl/gl_level_budget_path
 
