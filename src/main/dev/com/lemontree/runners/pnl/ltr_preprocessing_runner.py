@@ -119,7 +119,7 @@ def run_ltr(spark_session, glue_context, config, args):
     bucket_name = config.get("bucket_name").replace("s3://", "")
     output_prefix = config.get("output_path") + "/"
     zip_output_key = f"{output_prefix}{month_name}_ltr.zip"
-    local_zip_file = f"{month_name}_LTR.zip"
+    local_zip_file = f"{month_name}_ltr.zip"
 
     print(f"Output Prefix      : {output_prefix}")
     print(f"Target ZIP Key     : {zip_output_key}")
@@ -130,10 +130,10 @@ def run_ltr(spark_session, glue_context, config, args):
 
     # List all CSV files in the output path
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=output_prefix)
-    csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.csv')]
+    csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.xlsx')]
 
     if not csv_keys:
-        print("No CSV files found to zip.")
+        print("No xlsx files found to zip.")
     else:
         print(f"Found these CSV files to process: {csv_keys}")
         # Create an in-memory ZIP file
@@ -158,7 +158,7 @@ def run_ltr(spark_session, glue_context, config, args):
             zip_bytes = f_zip.read()
 
         send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
-                               f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .",
+                               f"LTR data of following hotels are present in the zip: {', '.join(managed_hotels)}: .",
                                 "LTR Detailed Report")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')
