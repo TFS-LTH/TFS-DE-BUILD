@@ -11,6 +11,8 @@ import logging
 import pandas as pd
 from datetime import date, timedelta
 
+from com.lemontree.constants.hotel_lists import hotel_list
+
 # Logger setup
 MSG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -237,11 +239,12 @@ def calculate_week_number_dynamic_year(current_date):
 def get_managed_hotels_from_tb(tb_file_path: str, hotel_codes: str = None) -> list:
 
     # Read the TB data for the month to get the hotel codes
-    tb_full = read_tb_file(tb_file_path)
     if hotel_codes and hotel_codes.strip():
         managed_hotels = [i.strip() for i in hotel_codes.split(",")]
     else:
-        managed_hotels = tb_full['Abbrevation'].dropna().tolist()
+        # tb_full = read_tb_file(tb_file_path)
+        # managed_hotels = tb_full['Abbrevation'].dropna().tolist()
+        managed_hotels = hotel_list
 
     print(f"Hotels considered for running: {managed_hotels}")
 
