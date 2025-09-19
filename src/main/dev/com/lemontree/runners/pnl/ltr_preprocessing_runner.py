@@ -123,7 +123,6 @@ def run_ltr(spark_session, glue_context, config, args):
             obj = s3_client.get_object(Bucket=bucket_nm, Key=file_key)
 
             ltr = pd.read_excel(io.BytesIO(obj['Body'].read()))
-            print(ltr.head())
             print(f"file_key: {file_key}")
 
             # Calculate the sum of "Total Room Revenue"
@@ -131,7 +130,7 @@ def run_ltr(spark_session, glue_context, config, args):
 
             # Append the result to the final DataFrame
             new_row = pd.DataFrame([{
-                'Hotel Code': file_key.split(suffix)[0],
+                'Hotel Code': file_key.split(suffix)[0].split("/")[-1],
                 'Total Room Revenue': total_revenue
             }])
             ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
@@ -163,7 +162,7 @@ def run_ltr(spark_session, glue_context, config, args):
             zip_bytes = f_zip.read()
 
         send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
-                               f"LTR data of following hotels are present in the zip: {', '.join(managed_hotels)}: .",
+                               f"LTR data of following hotels are present in the zip: {', '.join(managed_hotels)}",
                                 "LTR Detailed Report")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')
