@@ -27,23 +27,17 @@ def run_ltr(spark_session, glue_context, config, args):
     print(f"month_name: {month_name}")
     print(f"year_ltr: {year_ltr}")
 
-    mapping_file = config.get("mapping_file")
-    portel_bucket_name = config.get("portel_bucket_name")
     bucket_name = config.get("bucket_name")
-    parquet_output_path = config.get("parquet_output_path")
-    csv_output_path = config.get("csv_output_path")
+    portel_bucket_name = config.get("portel_bucket_name")
+
+    mapping_file = bucket_name + config.get("mapping_file")
+    output_path = bucket_name + config.get("output_path")
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
 
-    full_parquet_output_path = f"{bucket_name}/{parquet_output_path}"
-    full_csv_output_path = f"{bucket_name}/{csv_output_path}"
-    destination_file_path_parquet = f"{full_parquet_output_path}/year={year_ltr}/month={month_ltr}"
-    destination_file_path_csv = f"{full_csv_output_path}/year={year_ltr}/month={month_ltr}"
+    destination_file_path = f"{output_path}/year={year_ltr}/month={month_ltr}"
 
-    print(f"full_parquet_output_path: {full_parquet_output_path}")
-    print(f"full_csv_output_path: {full_csv_output_path}")
-    print(f"destination_file_path_parquet: {destination_file_path_parquet}")
-    print(f"destination_file_path_csv: {destination_file_path_csv}")
+    print(f"destination_file_path: {destination_file_path}")
 
     print(' ############################### start processing LTR PER PROCESSING ############################### ')
 
@@ -77,11 +71,10 @@ def run_ltr(spark_session, glue_context, config, args):
         try:
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';')
-            df.to_parquet(f'{destination_file_path_parquet}/{hotel_code}_ltr.parquet', index=False)
-            df.to_csv(f'{destination_file_path_csv}/{hotel_code}_ltr.csv', index=False)
+            df.to_excel(f'{destination_file_path}/{hotel_code}_ltr.csv', index=False)
 
             # LTR - to finance
-            ltr = pd.read_csv(f'{destination_file_path_csv}/{hotel_code}.csv', delimiter=',')
+            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}.csv')
             # Calculate the sum of "Total Room Revenue"
             total_revenue = ltr['Total Room Revenue'].sum()
 
@@ -104,7 +97,7 @@ def run_ltr(spark_session, glue_context, config, args):
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}", "LTR Pnl JOB")
     else:
         print("Processing completed without any errors.")
-        ltr_final.to_csv(f'{destination_file_path_csv}/{month_name}_ltr.csv', index=False)
+        ltr_final.to_csv(f'{destination_file_path}/{month_name}_ltr.csv', index=False)
 
         send_email_with_attachments(notify_email, None, None, None, None,
                                    f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .", "LTR Pnl JOB")
@@ -115,8 +108,9 @@ def run_ltr(spark_session, glue_context, config, args):
 
     print(' ############################### start processing ZIPS OF LTR ############################### ')
 
-    csv_folder_prefix = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/"
-    zip_output_key = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
+    output_path = config.get("output_path")
+    csv_folder_prefix = f"{output_path}/year={year_ltr}/month={month_ltr}/"
+    zip_output_key = f"{output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
 
     # List all CSV files in the given prefix
     s3_client = boto3.client('s3')

@@ -1,1 +1,4 @@
-hotel_list = ["ABC"]
+hotel_list = \
+    [
+        "ABC"
+    ]

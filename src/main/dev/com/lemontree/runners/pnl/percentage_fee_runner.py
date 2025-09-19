@@ -56,14 +56,11 @@ def run_percentage_fee(spark_session, glue_context, config, args):
             per_t['Percentage'] = per_t.apply(
                 lambda row: '' if row['Particulars'] == 'Incentive Fees: ' else row['Percentage'], axis=1)
 
-            # write in parquet
-            per_t.to_parquet(f'{output_path}/{code}_percentage_fees.parquet')
-
             # Create the Excel file name for the final_tb
-            excel_file_name = f'{code}_percentage_fees.xlsx'
-            per_t.to_excel(f'{output_path}/{excel_file_name}' , index=False, sheet_name=f'{code}')
+            file_name = f'{output_path}/{code}_percentage_fees.xlsx'
+            per_t.to_excel(f'{file_name}' , index=False, sheet_name=f'{code}')
 
-            print(f"Excel file successfully uploaded to {output_path}/{excel_file_name}")
+            print(f"Excel file successfully uploaded to {file_name}")
         except Exception as e:
             print(f"Error processing percentage fee for hotel_code - {code}: {e}")
             error_list.append(code)
