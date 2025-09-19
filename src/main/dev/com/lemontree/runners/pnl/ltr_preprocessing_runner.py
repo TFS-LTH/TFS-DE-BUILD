@@ -75,11 +75,11 @@ def run_ltr(spark_session, glue_context, config, args):
 
         try:
             # Read the file from the source S3 bucket
-            df = pd.read_csv(ltr_file_path, delimiter=';')
+            df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
             df.to_excel(f'{destination_file_path}/{hotel_code}_ltr.xlsx', index=False)
 
             # LTR - to finance
-            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}.xlsx')
+            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}_ltr.xlsx')
             # Calculate the sum of "Total Room Revenue"
             total_revenue = ltr['Total Room Revenue'].sum()
 
