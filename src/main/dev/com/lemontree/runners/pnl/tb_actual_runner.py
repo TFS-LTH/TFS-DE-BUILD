@@ -31,6 +31,14 @@ def run_tb_actual(spark_session, glue_context, config, args):
     output_path = bucket_name + config.get("output_path")
     notify_email = config.get("notify_email")
 
+    print(f"bucket_name : {bucket_name}")
+    print(f"back_up_tb_path : {back_up_tb_path}")
+    print(f"tb_source_path : {tb_source_path}")
+    print(f"tb_file_path : {tb_file_path}")
+    print(f"fsli_path : {fsli_path}")
+    print(f"output_path : {output_path}")
+    print(f"notify_email : {notify_email}")
+
     # Date handling
     if update_month == "":
         # First day of previous month (accurate)
@@ -70,8 +78,10 @@ def run_tb_actual(spark_session, glue_context, config, args):
     tb_path = f'{tb_file_path}/{full_file_name}'
     print(f'tb_path : {tb_path}')
 
+    tb_path_full = f'{tb_source_path}/{full_file_name}'
+    print(f'tb_path_full : {tb_path_full}')
     # copy tb from source and pace in our warehouse
-    tb = pd.read_csv(f"{tb_source_path}/{full_file_name}", encoding='ISO-8859-1')
+    tb = pd.read_csv(tb_path_full, encoding='ISO-8859-1')
     tb.to_csv(tb_path, index=False)
 
     tb_full = pd.read_csv(tb_path, header=2, encoding='ISO-8859-1')
