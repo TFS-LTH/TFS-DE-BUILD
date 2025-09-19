@@ -35,11 +35,14 @@ def send_email_with_attachments(notify_email_addresses, pdf_content, pdf_filenam
         zip_attachment.add_header('Content-Disposition', 'attachment', filename=zip_filename)
         msg.attach(zip_attachment)
 
+    # Convert comma-separated string to list
+    destinations_list = [email.strip() for email in notify_email_addresses.split(",")]
+
     try:
         print(f"Sending email to: {notify_email_addresses}")
         response = ses_client.send_raw_email(
             Source=msg['From'],
-            Destinations=notify_email_addresses,
+            Destinations=destinations_list,
             RawMessage={'Data': msg.as_string()}
         )
         print(f"Email sent successfully: {response}")
