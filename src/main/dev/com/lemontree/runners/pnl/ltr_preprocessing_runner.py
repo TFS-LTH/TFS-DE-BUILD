@@ -72,10 +72,10 @@ def run_ltr(spark_session, glue_context, config, args):
         try:
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';')
-            df.to_excel(f'{destination_file_path}/{hotel_code}_ltr.csv', index=False)
+            df.to_excel(f'{destination_file_path}/{hotel_code}_ltr.xlsx', index=False)
 
             # LTR - to finance
-            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}.csv')
+            ltr = pd.read_excel(f'{destination_file_path}/{hotel_code}.xlsx')
             # Calculate the sum of "Total Room Revenue"
             total_revenue = ltr['Total Room Revenue'].sum()
 
@@ -98,10 +98,8 @@ def run_ltr(spark_session, glue_context, config, args):
                                    f"Processing of LTR failed for  hotel codes: {', '.join(error_list)}", "LTR Pnl JOB")
     else:
         print("Processing completed without any errors.")
-        ltr_final.to_csv(f'{destination_file_path}/{month_name}_ltr.csv', index=False)
-
-        send_email_with_attachments(notify_email, None, None, None, None,
-                                   f"Processing of LTR Completed successfully for  hotel codes: {', '.join(managed_hotels)}: .", "LTR Pnl JOB")
+        ltr_final.to_excel(f'{destination_file_path}/{month_name}_ltr.xlsx', index=False)
+        print(f"File saved: {destination_file_path}/{month_name}_ltr.xlsx")
 
     print(' ############################### end processing LTR PER PROCESSING ############################### ')
 
