@@ -13,7 +13,6 @@ class LtrPreprocessingRunner(BaseJobRunner):
         run_ltr(spark_session, glue_context, self.config, args)
 
 def run_ltr(spark_session, glue_context, config, args):
-    global ltr_final
     print("Running LTR pipeline...")
 
     first_day_of_current_month = datetime.now().replace(day=1)
