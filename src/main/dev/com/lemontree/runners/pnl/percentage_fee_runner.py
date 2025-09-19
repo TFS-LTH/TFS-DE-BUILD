@@ -25,6 +25,10 @@ def run_percentage_fee(spark_session, glue_context, config, args):
     full_parquet_output_path = f"{bucket_name}/{parquet_output_path}"
     full_excel_output_path = f"{bucket_name}/{excel_output_path}"
 
+    print(f"percentage_fee_look_up_path: {percentage_fee_look_up_path}")
+    print(f"full_parquet_output_path: {full_parquet_output_path}")
+    print(f"full_excel_output_path: {full_excel_output_path}")
+
     # percentage lookup file
     percentage_fee = pd.read_excel(percentage_fee_look_up_path,  header=1)
     percentage_fee = percentage_fee.drop(columns=['Mpehotel'])

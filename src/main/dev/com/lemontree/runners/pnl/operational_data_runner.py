@@ -57,27 +57,29 @@ def run_operational_data(spark_session, glue_context, config, args):
         except ValueError:
             raise ValueError(f"Invalid date format: {update_month}. Expected 'YYYY-MM-dd'.")
 
-    print(f'Runing for the date: {last_month_date}')
-
-    month_ltr = last_month_date.strftime("%m")
-    year_ltr = last_month_date.strftime("%Y")
-
+    month = last_month_date.strftime("%m")
+    year = last_month_date.strftime("%Y")
     last_day_formatted = last_month_date.strftime("%Y-%m-%d")
     last_month_year = last_month_date.strftime("%b-%y").capitalize()
-    # Current year in YY format
     current_year_yy = datetime.now().strftime("%y")
-    # Full current year (YYYY)
     current_year_full = datetime.now().year
-    # Future year (next year)
     future_year_full = current_year_full + 1
-    # Future year in YY format
     future_year_yy = str(future_year_full)[2:]
-    # Previous year (YY)
     previous_year_yy = f"{(current_year_full - 1) % 100:02d}"
     two_years_ago_yy = f"{(current_year_full - 2) % 100:02d}"
-
-
     backup_timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
+    print(f'Running for the date: {last_month_date}')
+    print(f'month: {month}')
+    print(f'year: {year}')
+    print(f'last_day_formatted: {last_day_formatted}')
+    print(f'last_month_year: {last_month_year}')
+    print(f'current_year_yy: {current_year_yy}')
+    print(f'current_year_full: {current_year_full}')
+    print(f'future_year_full: {future_year_full}')
+    print(f'future_year_yy: {future_year_yy}')
+    print(f'previous_year_yy: {previous_year_yy}')
+    print(f'two_years_ago_yy: {two_years_ago_yy}')
     print(f'backup_timestamp: {backup_timestamp}')
 
     # backup directory
@@ -167,9 +169,9 @@ def run_operational_data(spark_session, glue_context, config, args):
 
     managed_hotels = get_managed_hotels(tb_file_path, hotel_codes)
 
-    try:
+    for code in managed_hotels:
         # read the tb data for the month to get the hotel codes
-        for code in managed_hotels:
+        try:
             print(f'Running operational Increment for hotel: {code}')
             if code in ['LTPPT', 'LTHMB']:
                 code = f'{code}1'
@@ -195,11 +197,11 @@ def run_operational_data(spark_session, glue_context, config, args):
                 # Changing hotel code as requird
                 try:
                     # First try to load the sheet as converted name
-                    LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year_ltr}/month={month_ltr}/{converted_code}.csv')
+                    LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year}/month={month}/{converted_code}.csv')
                 except Exception as e:
                     # If that fails, try to load the sheet as 'regular name'
                     try:
-                        LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year_ltr}/month={month_ltr}/{code}.csv')
+                        LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year}/month={month}/{code}.csv')
                     except Exception as e1:
                         # Handle the case where both sheet names fail (optional)
                         print(f"Error: Could not find sheet for {month}")
@@ -240,7 +242,7 @@ def run_operational_data(spark_session, glue_context, config, args):
             final = final.fillna(0)
 
             # Reading last month
-            last_month = pd.read_excel(f'{operational_data_actual}/{code}_operational_data.xlsx')
+            last_month = pd.read_excel(f'{operational_data_actual}/{code}_operational_data_actual.xlsx')
 
             # keep a backup to this directory
             complete_backup_path1 = backup_path + f'/actual/{code}_operational_data.xlsx'
@@ -254,12 +256,12 @@ def run_operational_data(spark_session, glue_context, config, args):
             operational_data = result[resulted_columns]
 
             # Create the Excel file name for the final_tb
-            excel_file_name = f'/{code}_operational_data.xlsx'
+            excel_file_name = f'/{code}_operational_data_actual.xlsx'
             operational_data.to_excel(operational_data_actual + excel_file_name, sheet_name=f'{code}', index=False)
 
-    except Exception as e:
-        print(f"Error found while processing hotel_code: {code}. Error: ", e)
-        error_list.append(code)
+        except Exception as e:
+            print(f"Error found while processing hotel_code: {code}. Error: ", e)
+            error_list.append(code)
 
     if len(error_list) > 0:
         print("Error found while processing the below files.")
@@ -274,7 +276,7 @@ def run_operational_data(spark_session, glue_context, config, args):
 
     print('##################################### Operational Budget START #######################################')
 
-    budget = pd.read_csv(f'{bucket_name}/{budget_file}')
+    budget = pd.read_csv(f'{bucket_name}{budget_file}')
     budget = budget.drop(columns=['Mpehotel', 'Match Column', 'FTY'])
 
     budget_df = budget[budget['Sub_Head'] == 'RPD']

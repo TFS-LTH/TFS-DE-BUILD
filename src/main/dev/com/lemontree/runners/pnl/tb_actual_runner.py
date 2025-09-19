@@ -116,9 +116,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
             print('Final tb for the month created for hotel_code: ' + code)
 
             # Join to fsli
-            # final_tb = pd.merge(fsli_mapping, tb_final, on=['GL Code & Name', 'GL Code', 'GL Name'], how='right')
-            final_tb = pd.merge(fsli_mapping, tb_final.drop(['GL Name', 'GL Code & Name'], axis=1), on=['GL Code'],
-                                how='right')
+            final_tb = pd.merge(fsli_mapping, tb_final.drop(['GL Name', 'GL Code & Name'], axis=1), on=['GL Code'], how='right')
             print(f'joined with fsli for hotel_code: ' + code)
 
             # change the expence columns to positive

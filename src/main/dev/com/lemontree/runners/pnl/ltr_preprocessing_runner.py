@@ -15,6 +15,18 @@ class LtrPreprocessingRunner(BaseJobRunner):
 def run_ltr(spark_session, glue_context, config, args):
     print("Running LTR pipeline...")
 
+    first_day_of_current_month = datetime.now().replace(day=1)
+    first_day_formatted = first_day_of_current_month.strftime("%d%m%Y")
+    month_ltr = (datetime.now() - timedelta(days=30)).strftime("%m")
+    month_name = (datetime.now() - timedelta(days=30)).strftime("%b")
+    year_ltr = (datetime.now() - timedelta(days=30)).strftime("%Y")
+
+    print(f"first_day_of_current_month: {first_day_of_current_month}")
+    print(f"first_day_formatted: {first_day_formatted}")
+    print(f"month_ltr: {month_ltr}")
+    print(f"month_name: {month_name}")
+    print(f"year_ltr: {year_ltr}")
+
     tb_file_path = config.get("tb_file_path")
     mapping_file = config.get("mapping_file")
     portel_bucket_name = config.get("portel_bucket_name")
@@ -26,19 +38,15 @@ def run_ltr(spark_session, glue_context, config, args):
 
     full_parquet_output_path = f"{bucket_name}/{parquet_output_path}"
     full_csv_output_path = f"{bucket_name}/{csv_output_path}"
-
-    print(' ############################### start processing LTR PER PROCESSING ############################### ')
-
-    first_day_of_current_month = datetime.now().replace(day=1)
-    first_day_formatted = first_day_of_current_month.strftime("%d%m%Y")
-    month_ltr = (datetime.now() - timedelta(days=30)).strftime("%m")
-    month_name = (datetime.now() - timedelta(days=30)).strftime("%b")
-    year_ltr = (datetime.now() - timedelta(days=30)).strftime("%Y")
-
-    s3_client = boto3.client('s3')
-
     destination_file_path_parquet = f"{full_parquet_output_path}/year={year_ltr}/month={month_ltr}"
     destination_file_path_csv = f"{full_csv_output_path}/year={year_ltr}/month={month_ltr}"
+
+    print(f"full_parquet_output_path: {full_parquet_output_path}")
+    print(f"full_csv_output_path: {full_csv_output_path}")
+    print(f"destination_file_path_parquet: {destination_file_path_parquet}")
+    print(f"destination_file_path_csv: {destination_file_path_csv}")
+
+    print(' ############################### start processing LTR PER PROCESSING ############################### ')
 
     # read the tb data for the month to get the hotel codes
     managed_hotels = get_managed_hotels(tb_file_path, hotel_codes)
@@ -112,6 +120,7 @@ def run_ltr(spark_session, glue_context, config, args):
     zip_output_key = f"{csv_output_path}/year={year_ltr}/month={month_ltr}/{month_name}_ltr.zip"
 
     # List all CSV files in the given prefix
+    s3_client = boto3.client('s3')
     response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=csv_folder_prefix)
     csv_keys = [obj['Key'] for obj in response.get('Contents', []) if obj['Key'].endswith('.csv')]
 
@@ -140,7 +149,7 @@ def run_ltr(spark_session, glue_context, config, args):
     with open('files.zip', 'rb') as f_zip:
         zip_bytes = f_zip.read()
 
-    send_email_with_attachments(notify_email, None, None,zip_bytes, f"{month_name}_LTR.zip",
+    send_email_with_attachments(notify_email, None, None, zip_bytes, f"{month_name}_LTR.zip",
                                f"ZIP of LTR Completed successfully for hotel codes: {', '.join(managed_hotels)}: .")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')

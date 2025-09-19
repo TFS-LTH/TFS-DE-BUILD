@@ -1,24 +1,24 @@
 common_configs:
   bucket_name: s3://tfs-lemontree-de
   notify_email: sde1_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com
+  flsi_mapping_path: /input_files/pnl/mapping_file/fsli_mapping.xlsx
 
 tb:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   tb_source_path: s3://lemontree-datalake-raw-production/CENTRAL/alif-data
   back_up_tb_path: /archive/pnl/tb_update
-  flsi_mapping_path: /input_files/pnl/flsi/FSLI_Mapping.xlsx
   compiled_tb_path: /input_files/pnl/tb_update/compiled_tbs
   parquet_output_path: /output_files/pnl/tb_actuals/parquet_files
 
 percentage_fee:
-  mapping_file: /input_files/pnl/percentage_fees/mapping_file/percentage_fees.xlsx
+  mapping_file: /input_files/pnl/mapping_file/percentage_fees.xlsx
   parquet_output_path: /output_files/pnl/percentage_fees/parquet_files
   excel_output_path: /output_files/pnl/percentage_fees/excel_files
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
 
 ltr:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
-  mapping_file: /input_files/pnl/ltr/mapping_files/hotel_code_to_ltr_mapping.csv
+  mapping_file: /input_files/pnl/mapping_files/hotel_code_to_ltr_mapping.csv
   portel_bucket_name: s3://protel-data
   output_path: /output_files/pnl/ltr
 
@@ -26,10 +26,16 @@ operational_data:
   tb_file_path: /input_files/pnl/tb_update/tb_warehouse
   dbr_bucket: s3://lemontree-dashboards
   back_up_operational_data_path: /archive/pnl/operational_data
-  budget_file: output_files/budget/cummulative_budget_file_2025_2026.csv
+  budget_file: /output_files/budget/cummulative_budget_file_2025_2026.csv
   ltr_output: /output_files/pnl/ltr
   operational_data_actual: /output_files/pnl/operational_data_actuals
   operational_data_budget: /output_files/pnl/operational_data_budget
+
+aop:
+  expense_mapping: /input_files/pnl/mapping_file/expense_mapping.xlsx
+  income_mapping: /input_files/pnl/mapping_file/income_mapping.xlsx
+  gl_level_budget_path: /output_files/pnl/gl_level_budget
+  back_up_gl_level_budget_path: /archive/pnl/gl_level_budget_path
 
 rob:
   partitions: 1
