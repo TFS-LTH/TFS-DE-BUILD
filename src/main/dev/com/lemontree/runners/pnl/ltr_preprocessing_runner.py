@@ -41,13 +41,15 @@ def run_ltr(spark_session, glue_context, config, args):
     mapping_file = bucket_name + config.get("mapping_file")
     output_path = bucket_name + config.get("output_path")
     notify_email = config.get("notify_email")
+    archive_path = bucket_name + config.get("archive_path")
     hotel_codes = args.get('hotel_codes')
+
+    final_archive_path = f'{archive_path}/{year_ltr}/{month_ltr}/'
 
     print(f"Output Prefix      : {output_prefix}")
     print(f"Target ZIP Key     : {zip_output_key}")
     print(f"local_zip_file     : {local_zip_file}")
-
-    #destination_file_path = f"{output_path}/year={year_ltr}/month={month_ltr}"
+    print(f"final_archive_path : {final_archive_path}")
 
     print(' ############################### start processing LTR PER PROCESSING ############################### ')
 
@@ -87,6 +89,7 @@ def run_ltr(spark_session, glue_context, config, args):
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
             df.to_excel(f'{output_path}/{hotel_code}{suffix}', index=False)
+            df.to_excel(f'{final_archive_path}{hotel_code}{suffix}', index=False)
 
             print(f"Processed for hotel_code: {hotel_code}")
 
@@ -136,6 +139,7 @@ def run_ltr(spark_session, glue_context, config, args):
             ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
 
         ltr_final.to_excel(f'{output_path}/{month_name}_cumulative_ltrs.xlsx', index=False)
+        ltr_final.to_excel(f'{final_archive_path}{month_name}_cumulative_ltrs.xlsx', index=False)
         print(f"File saved: {output_path}/{month_name}_cumulative_ltrs.xlsx")
 
         print('###################### START: Processing ZIP of LTR files ######################')

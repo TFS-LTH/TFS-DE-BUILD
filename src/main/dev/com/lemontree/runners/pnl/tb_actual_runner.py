@@ -134,14 +134,16 @@ def run_tb_actual(spark_session, glue_context, config, args):
 
             # Rule 1: Expense rows
             expense_mask = final_tb['FS Mapping'] == 'Expenses'
-            final_tb.loc[expense_mask, month_col] = final_tb.loc[expense_mask, month_col].abs()
+            #final_tb.loc[expense_mask, month_col] = final_tb.loc[expense_mask, month_col].abs()
+            final_tb.loc[expense_mask, month_col] = -final_tb.loc[expense_mask, month_col]
 
             # Rule 2: Service Charge Expense & Income
             special_mask = (
                     (final_tb['FSLI Mapping'] == 'Service Charge Expense') &
                     (final_tb['FS Mapping'] == 'Income')
             )
-            final_tb.loc[special_mask, month_col] = final_tb.loc[special_mask, month_col].abs()
+            # final_tb.loc[special_mask, month_col] = final_tb.loc[special_mask, month_col].abs()
+            final_tb.loc[special_mask, month_col] = -final_tb.loc[special_mask, month_col]
 
             # Taking last month Tb and then merging with current TB
             complied_tb_file_name = output_path + f'/{code}_tb_actuals.xlsx'
@@ -213,7 +215,7 @@ def run_tb_actual(spark_session, glue_context, config, args):
 
         send_email_with_attachments(notify_email, None, None, None, None,
                                     f"Processing of TB Actuals failed for  hotel codes: {', '.join(error_list)}",
-                                    "TB Actuals Pnl Job")
+                                    "ERROR NOTIFICATION: TB Actual Pnl Job")
 
     else:
         print('No Errors found')

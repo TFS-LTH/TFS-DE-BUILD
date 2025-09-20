@@ -1,6 +1,7 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_helper_methods import get_managed_hotels
 from com.lemontree.utils.utils_email import send_email_with_attachments
+from datetime import datetime, timedelta
 import pandas as pd
 
 class PercentageFeeRunner(BaseJobRunner):
@@ -11,16 +12,25 @@ class PercentageFeeRunner(BaseJobRunner):
 def run_percentage_fee(spark_session, glue_context, config, args):
     print("Running run_percentage_fee pipeline...")
 
+    month_ltr = (datetime.now() - timedelta(days=30)).strftime("%m")
+    year_ltr = (datetime.now() - timedelta(days=30)).strftime("%Y")
+
     # get all the variable values from config
     bucket_name = config.get("bucket_name")
     mapping_file = bucket_name + config.get("mapping_file")
     output_path = bucket_name + config.get("output_path")
+    archive_path = bucket_name + config.get("archive_path")
     notify_email = config.get("notify_email")
     hotel_codes = args.get('hotel_codes')
+    final_archive_path = f'{archive_path}/{year_ltr}/{month_ltr}/'
 
-    print(f"bucket_name: {bucket_name}")
-    print(f"mapping_file: {mapping_file}")
-    print(f"hotel_codes: {hotel_codes}")
+    print(f"bucket_name         : {bucket_name}")
+    print(f"mapping_file        : {mapping_file}")
+    print(f"hotel_codes         : {hotel_codes}")
+    print(f"month_ltr           : {month_ltr}")
+    print(f"year_ltr            : {year_ltr}")
+    print(f"final_archive_path  : {final_archive_path}")
+
 
     # percentage lookup file
     percentage_fee = pd.read_excel(mapping_file,  header=1)
@@ -59,6 +69,7 @@ def run_percentage_fee(spark_session, glue_context, config, args):
             # Create the Excel file name for the final_tb
             file_name = f'{output_path}/{code}_percentage_fees.xlsx'
             per_t.to_excel(f'{file_name}' , index=False, sheet_name=f'{code}')
+            per_t.to_excel(f'{final_archive_path}/{code}_percentage_fees.xlsx' , index=False, sheet_name=f'{code}')
 
             print(f"Excel file successfully uploaded to {file_name}")
         except Exception as e:
