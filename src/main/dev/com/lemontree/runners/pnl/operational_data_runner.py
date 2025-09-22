@@ -30,7 +30,7 @@ def run_operational_data(spark_session, glue_context, config, args):
     ltr_output_file_path = bucket_name + config.get("ltr_output")
     operational_data_actual = bucket_name + config.get("operational_data_actual")
     operational_data_budget = bucket_name + config.get("operational_data_budget")
-    back_up_operational_data_path = bucket_name + config.get("back_up_operational_data_path")
+    archive_path = bucket_name + config.get("archive_path")
 
     print(f"dbr_bucket - {dbr_bucket}")
     print(f"bucket_name - {bucket_name}")
@@ -38,7 +38,7 @@ def run_operational_data(spark_session, glue_context, config, args):
     print(f"ltr_output_file_path - {ltr_output_file_path}")
     print(f"operational_data_actual - {operational_data_actual}")
     print(f"operational_data_budget - {operational_data_budget}")
-    print(f"back_up_operational_data_path - {back_up_operational_data_path}")
+    print(f"archive_path - {archive_path}")
 
 
     # Date handling
@@ -80,7 +80,7 @@ def run_operational_data(spark_session, glue_context, config, args):
     print(f'backup_timestamp: {backup_timestamp}')
 
     # backup directory
-    backup_path = f'{back_up_operational_data_path}/{backup_timestamp}'
+    backup_path = f'{archive_path}/{backup_timestamp}'
 
 
     dbr = spark_session.read.parquet(f'{dbr_bucket}/production/dbr_output/dbr_warehouse/')
