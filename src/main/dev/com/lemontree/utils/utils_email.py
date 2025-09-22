@@ -14,7 +14,7 @@ def send_email_with_attachments(notify_email_addresses, pdf_content, pdf_filenam
     body = f"""
     <html>
     <body>
-    <p>Hi,</p>
+    <p>Hi Team,</p>
     <p>{attached_message}</p>
     <p>Thanks and Regards,</p>
     <p><b>Disclaimer : This is a system generated e-mail and it is not being monitored. Any reply that will be sent on this can't be acknowledged by anyone. Hence, please do not reply directly.</b></p>    

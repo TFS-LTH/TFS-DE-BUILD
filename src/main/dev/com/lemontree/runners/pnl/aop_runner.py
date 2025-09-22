@@ -571,9 +571,9 @@ def run_aop(spark_session, glue_context, config, args):
                 # print("updating parquet file location")
                 # resulted_budget.to_parquet(f'{output_parquet_bucket}/{code}_budget.parquet')
 
-            # Create the Excel file name for the final_tb
-            excel_file_name = f'/{code}_gl_level_budget.xlsx'
-            resulted_budget.to_excel(f'{gl_level_budget_path}{excel_file_name}', index=False, sheet_name=f'{code}')
+                # Create the Excel file name for the final_tb
+                excel_file_name = f'/{code}_gl_level_budget.xlsx'
+                resulted_budget.to_excel(f'{gl_level_budget_path}{excel_file_name}', index=False, sheet_name=f'{code}')
 
         except Exception as e:
             print(f"Error found while processing hotel_code: {code}. Error: ", e)

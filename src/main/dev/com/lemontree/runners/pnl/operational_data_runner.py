@@ -28,8 +28,8 @@ def run_operational_data(spark_session, glue_context, config, args):
     # s3_bucket_name = 'ltree-softsensor-dashboards'
     dbr_bucket = config.get("dbr_bucket")
     bucket_name = config.get("bucket_name")
-    budget_file = config.get("budget_file")
     ltr_output_file_path = bucket_name + config.get("ltr_output")
+    budget_file = bucket_name + config.get("budget_file")
     operational_data_actual = bucket_name + config.get("operational_data_actual")
     operational_data_budget = bucket_name + config.get("operational_data_budget")
     archive_path = bucket_name + config.get("archive_path")
@@ -265,7 +265,7 @@ def run_operational_data(spark_session, glue_context, config, args):
             print(item)
         send_email_with_attachments(notify_email, None, None, None, None,
                                     f"Processing of Operational Actual failed for  hotel codes: {', '.join(error_list)}",
-                                    "Percentage Fee Job")
+                                    "ERROR: Percentage Fee Job")
     else:
         print('No Errors found')
 
@@ -275,7 +275,7 @@ def run_operational_data(spark_session, glue_context, config, args):
 
     print('##################################### Operational Budget START #######################################')
 
-    budget = pd.read_csv(f'{bucket_name}{budget_file}')
+    budget = pd.read_csv(f'{budget_file}')
     budget = budget.drop(columns=['Mpehotel', 'Match Column', 'FTY'])
 
     budget_df = budget[budget['Sub_Head'] == 'RPD']
@@ -391,7 +391,7 @@ def run_operational_data(spark_session, glue_context, config, args):
             print(item)
         send_email_with_attachments(notify_email, None, None, None, None,
                                     f"Processing of Operational Budget failed for  hotel codes: {', '.join(error_list1)}",
-                                    "Percentage Fee Job")
+                                    "ERROR: Percentage Fee Job")
     else:
         print('No Errors found')
 

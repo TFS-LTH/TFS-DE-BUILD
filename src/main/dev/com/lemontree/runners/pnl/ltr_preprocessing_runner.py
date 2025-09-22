@@ -178,6 +178,6 @@ def run_ltr(spark_session, glue_context, config, args):
 
         send_email_with_attachments(notify_email, None, None, zip_bytes, local_zip_file,
                                f"LTR data of following hotels are present in the zip: {', '.join(managed_hotels)}",
-                                "LTR Detailed Report")
+                                "ERROR: LTR Detailed Report")
 
     print(' ############################### end processing ZIPS OF LTR ############################### ')
