@@ -61,7 +61,7 @@ def run_aop(spark_session, glue_context, config, args):
             expense = pd.DataFrame()
             for hotel_code, file_path in hotel_data:
                 # Expense Budget
-                print(f"reading for expense sheet for hotel_code", hotel_code)
+                print(f"reading for expense sheet for hotel_code: {hotel_code}, path: {file_path}")
                 df = pd.read_excel(file_path, sheet_name='Expense')
                 hotel = hotel_code
                 expense = pd.concat([expense, df])
@@ -131,7 +131,6 @@ def run_aop(spark_session, glue_context, config, args):
                 # Income Budget
                 print("reading for income sheet")
                 df = pd.read_excel(file_path, sheet_name='Income', header=1)
-                hotel = hotel_code
                 AOP = pd.concat([AOP, df])
                 AOP = AOP.drop(AOP.columns[[0, 1]], axis=1)
                 AOP = AOP.drop([0, 1])
@@ -593,7 +592,7 @@ def run_aop(spark_session, glue_context, config, args):
         for item in error_list:
             print(item)
         send_email_with_attachments(notify_email, None, None, None, None,
-                                    f"Processing of AOP Budget failed for hotel codes: {', '.join(error_list)}", "AOP Pnl JOB")
+                                    f"Processing of AOP Budget failed for hotel codes: {', '.join(error_list)}", "ERROR: AOP Pnl JOB")
     else:
         print("Processing completed without any errors.")
 

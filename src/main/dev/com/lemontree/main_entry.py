@@ -4,7 +4,7 @@ from com.lemontree.registry.job_classes import runners_map
 
 def main(args: dict):
     try:
-        job_name = args.get("job_name")
+        job_name = args.get("job_name").strip()
         if not job_name:
             raise ValueError("Missing required argument: 'job_name'")
 
