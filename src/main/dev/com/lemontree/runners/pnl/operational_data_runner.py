@@ -170,8 +170,8 @@ def run_operational_data(spark_session, glue_context, config, args):
         # read the tb data for the month to get the hotel codes
         try:
             print(f'Running operational Increment for hotel: {code}')
-            if code in ['LTPPT', 'LTHMB']:
-                code = f'{code}1'
+            # if code in ['LTPPT', 'LTHMB']:
+            #     code = f'{code}1'
 
             hotel_data = dbr_pandas[dbr_pandas['Hotel_Code'] == code]
             inventory_data = inventory_pandas[inventory_pandas['Hotel_Code'] == code]
@@ -189,20 +189,15 @@ def run_operational_data(spark_session, glue_context, config, args):
             # Loop through each month
             for i, month in enumerate(months, start=1):
 
-                converted_code = convert_hotel_code(code)
+                #converted_code = convert_hotel_code(code)
 
+                ltr_path = f'{ltr_output_file_path}/{code}_ltr.csv'
                 # Changing hotel code as requird
                 try:
-                    # First try to load the sheet as converted name
-                    LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year}/month={month}/{converted_code}.csv')
+                    print(f"Reading LTR from file path : {ltr_path}")
+                    LTR_data[f'LTR{i}'] = pd.read_csv(ltr_path)
                 except Exception as e:
-                    # If that fails, try to load the sheet as 'regular name'
-                    try:
-                        LTR_data[f'LTR{i}'] = pd.read_csv(f'{ltr_output_file_path}/year={year}/month={month}/{code}.csv')
-                    except Exception as e1:
-                        # Handle the case where both sheet names fail (optional)
-                        print(f"Error: Could not find sheet for {month}")
-                        continue
+                    print(f'Error reading LTR from file path: {ltr_path}, {e}')
 
                 # Drop rows where 'Inv. Number' is NaN
                 LTR_data[f'LTR{i}'] = LTR_data[f'LTR{i}'].dropna(subset=['Invoice Number'])
@@ -352,9 +347,9 @@ def run_operational_data(spark_session, glue_context, config, args):
     # Loop through each hotel for budget numbers
     for code in managed_hotels:
 
-        # hack to match the hotel codes
-        if code in ['LTPPT', 'LTHMB']:
-            code = f'{code}1'
+        # # hack to match the hotel codes
+        # if code in ['LTPPT', 'LTHMB']:
+        #     code = f'{code}1'
 
         final = budget_final[budget_final['Hotel_Code'] == code]
         final = final.fillna(0)
