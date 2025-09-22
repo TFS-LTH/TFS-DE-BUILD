@@ -541,7 +541,7 @@ def run_aop(spark_session, glue_context, config, args):
                 try:
                     # Last Budget
                     print("reading last year budget")
-                    last_bud = pd.read_excel(f'{gl_level_budget_path}/{code}_gl_level_budget.xlsx', header=3)
+                    last_bud = pd.read_excel(f'{gl_level_budget_path}/{code}_gl_level_budget.xlsx')
 
                     # keep a backup to this directory
                     complete_backup_path = back_up_gl_level_budget_path + f'/{code}_gl_level_budget.xlsx'
