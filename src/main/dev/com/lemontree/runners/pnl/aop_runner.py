@@ -38,7 +38,7 @@ def run_aop(spark_session, glue_context, config, args):
     print(f"budget_file_path: {budget_file_path}")
     print(f"notify_email: {notify_email}")
 
-    back_up_gl_level_budget_path = archive_gl_level_budget_path + backup_timestamp
+    back_up_gl_level_budget_path = f'{archive_gl_level_budget_path}/{backup_timestamp}'
     print(f'back_up_gl_level_budget_path: {back_up_gl_level_budget_path}')
 
     # FSLI MAPPING
@@ -59,6 +59,7 @@ def run_aop(spark_session, glue_context, config, args):
             # Read and process data for each hotel
             AOP = pd.DataFrame()
             expense = pd.DataFrame()
+            resulted_bud = pd.DataFrame()
             for hotel_code, file_path in hotel_data:
                 # Expense Budget
                 print(f"reading for expense sheet for hotel_code: {hotel_code}, path: {file_path}")
@@ -549,19 +550,19 @@ def run_aop(spark_session, glue_context, config, args):
 
                     last_bud = last_bud.drop(
                         columns={'Apr-25', 'May-25', 'Jun-25', 'Jul-25', 'Aug-25', 'Sep-25', 'Oct-25',
-                                 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26' })
+                                 'Nov-25', 'Dec-25', 'Jan-26', 'Feb-26', 'Mar-26'})
                     resulted_bud = (last_bud.drop(['GL Name', 'GL Code & Name', 'FSLI Mapping', 'FS Category', 'FS Mapping'], axis=1).
                                     merge(fsli_budget, on=[ 'GL Code'], how='outer'))
 
                 except FileNotFoundError as foe:
-                    print(foe.__cause__)
+                    print(foe)
                     resulted_bud = fsli_budget.copy()
                     cols_to_add = ['Apr-24', 'May-24', 'Jun-24', 'Jul-24', 'Aug-24', 'Sep-24', 'Oct-24', 'Nov-24',
                                    'Dec-24', 'Jan-25', 'Feb-25', 'Mar-25']
                     resulted_bud[cols_to_add] = 0
 
                 except Exception as e:
-                    print(f"An error occurred: {e.__cause__}")
+                    print(f"An error occurred: {e}")
 
                 # Select the required columns for the resulting DataFrame
                 resulted_budget_columns = ['FS Mapping', 'FS Category', 'FSLI Mapping', 'GL Code & Name',
