@@ -242,7 +242,7 @@ def run_operational_data(spark_session, glue_context, config, args):
             last_month = pd.read_excel(f'{operational_data_actual}/{code}_operational_data_actual.xlsx')
 
             # keep a backup to this directory
-            complete_backup_path1 = backup_path + f'/actual/{code}_operational_data.xlsx'
+            complete_backup_path1 = backup_path + f'/actual/{code}_operational_data_actual.xlsx'
             last_month.to_excel(complete_backup_path1, index=False, sheet_name=f'{code}')
             print(f'Back up created at : {complete_backup_path1}')
 
@@ -359,10 +359,10 @@ def run_operational_data(spark_session, glue_context, config, args):
         final = budget_final[budget_final['Hotel_Code'] == code]
         final = final.fillna(0)
 
-        last_month = pd.read_excel(f'{operational_data_budget}/{code}_budget_data.xlsx')
+        last_month = pd.read_excel(f'{operational_data_budget}/{code}_operational_data_budget.xlsx')
 
         # keep a backup to this directory
-        complete_backup_path = backup_path + f'/budget/{code}_budget_data.xlsx'
+        complete_backup_path = backup_path + f'/budget/{code}_operational_data_budget.xlsx'
         last_month.to_excel(complete_backup_path, index=False, sheet_name=f'{code}')
         print(f'Back up created at : {complete_backup_path}')
 
@@ -373,7 +373,7 @@ def run_operational_data(spark_session, glue_context, config, args):
         budget_data = result[resulted_columns]
 
         # Create the Excel file name for the final_tb
-        excel_file_name = f'/{code}_budget_data.xlsx'
+        excel_file_name = f'/{code}_operational_data_budget.xlsx'
         budget_data.to_excel(operational_data_budget + excel_file_name, sheet_name=f'{code}', index=False)
 
     print('##################################### Operational Budget END #######################################')
