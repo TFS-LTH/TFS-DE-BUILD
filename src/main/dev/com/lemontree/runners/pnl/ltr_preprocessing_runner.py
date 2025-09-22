@@ -88,8 +88,8 @@ def run_ltr(spark_session, glue_context, config, args):
         try:
             # Read the file from the source S3 bucket
             df = pd.read_csv(ltr_file_path, delimiter=';', encoding='ISO-8859-1')
-            df.to_excel(f'{output_path}/{hotel_code}{suffix}', index=False)
-            df.to_excel(f'{final_archive_path}{hotel_code}{suffix}', index=False)
+            df.to_excel(f'{output_path}/{hotel_code}{suffix}', index=False, sheet_name=f'{hotel_code}')
+            df.to_excel(f'{final_archive_path}{hotel_code}{suffix}', index=False, sheet_name=f'{hotel_code}')
 
             print(f"Processed for hotel_code: {hotel_code}")
 
@@ -126,14 +126,17 @@ def run_ltr(spark_session, glue_context, config, args):
             obj = s3_client.get_object(Bucket=bucket_nm, Key=file_key)
 
             ltr = pd.read_excel(io.BytesIO(obj['Body'].read()))
+
+            hotel_cd = file_key.split(suffix)[0].split("/")[-1]
             print(f"file_key: {file_key}")
+            print(f"hotel_cd: {hotel_cd}")
 
             # Calculate the sum of "Total Room Revenue"
             total_revenue = ltr['Total Room Revenue'].sum()
 
             # Append the result to the final DataFrame
             new_row = pd.DataFrame([{
-                'Hotel Code': file_key.split(suffix)[0].split("/")[-1],
+                'Hotel Code': hotel_cd,
                 'Total Room Revenue': total_revenue
             }])
             ltr_final = pd.concat([ltr_final, new_row], ignore_index=True)
