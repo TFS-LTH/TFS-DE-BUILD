@@ -22,7 +22,7 @@ ltr:
 
 operational_data:
   dbr_bucket: s3://lemontree-dashboards
-  back_up_operational_data_path: /archive/pnl/operational_data
+  archive_path: /archive/pnl/operational_data
   budget_file: /output_files/budget/cummulative_budget_file_2025_2026.csv
   ltr_output: /output_files/pnl/ltr
   operational_data_actual: /output_files/pnl/operational_data_actuals
