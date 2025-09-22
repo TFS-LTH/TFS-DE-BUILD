@@ -238,10 +238,10 @@ def run_operational_data(spark_session, glue_context, config, args):
             final = final.fillna(0)
 
             # Reading last month
-            last_month = pd.read_excel(f'{operational_data_actual}/{code}_operational_data_actual.xlsx')
+            last_month = pd.read_excel(f'{operational_data_actual}/{code}_operational_data_actuals.xlsx')
 
             # keep a backup to this directory
-            complete_backup_path1 = backup_path + f'/actual/{code}_operational_data_actual.xlsx'
+            complete_backup_path1 = backup_path + f'/actual/{code}_operational_data_actuals.xlsx'
             last_month.to_excel(complete_backup_path1, index=False, sheet_name=f'{code}')
             print(f'Back up created at : {complete_backup_path1}')
 
@@ -252,7 +252,7 @@ def run_operational_data(spark_session, glue_context, config, args):
             operational_data = result[resulted_columns]
 
             # Create the Excel file name for the final_tb
-            excel_file_name = f'/{code}_operational_data_actual.xlsx'
+            excel_file_name = f'/{code}_operational_data_actuals.xlsx'
             operational_data.to_excel(operational_data_actual + excel_file_name, sheet_name=f'{code}', index=False)
 
         except Exception as e:
