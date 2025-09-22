@@ -1,10 +1,12 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_helper_methods import get_managed_hotels
-import pandas as pd
 from datetime import datetime, timedelta
 from pyspark.sql import functions as F
 from pyspark.sql.functions import lit, first, date_format, to_date
 from pyspark.sql.types import DateType
+from com.lemontree.utils.utils_email import send_email_with_attachments
+import pandas as pd
+
 
 class OperationalDataRunner(BaseJobRunner):
     def run_job(self, spark_session, glue_context,  args) -> None:
@@ -31,6 +33,7 @@ def run_operational_data(spark_session, glue_context, config, args):
     operational_data_actual = bucket_name + config.get("operational_data_actual")
     operational_data_budget = bucket_name + config.get("operational_data_budget")
     archive_path = bucket_name + config.get("archive_path")
+    notify_email = config.get("notify_email")
 
     print(f"dbr_bucket - {dbr_bucket}")
     print(f"bucket_name - {bucket_name}")
@@ -39,6 +42,7 @@ def run_operational_data(spark_session, glue_context, config, args):
     print(f"operational_data_actual - {operational_data_actual}")
     print(f"operational_data_budget - {operational_data_budget}")
     print(f"archive_path - {archive_path}")
+    print(f"notify_email - {notify_email}")
 
 
     # Date handling
@@ -191,11 +195,11 @@ def run_operational_data(spark_session, glue_context, config, args):
 
                 #converted_code = convert_hotel_code(code)
 
-                ltr_path = f'{ltr_output_file_path}/{code}_ltr.csv'
+                ltr_path = f'{ltr_output_file_path}/{code}_ltr.xlsx'
                 # Changing hotel code as requird
                 try:
                     print(f"Reading LTR from file path : {ltr_path}")
-                    LTR_data[f'LTR{i}'] = pd.read_csv(ltr_path)
+                    LTR_data[f'LTR{i}'] = pd.read_excel(ltr_path)
                 except Exception as e:
                     print(f'Error reading LTR from file path: {ltr_path}, {e}')
 
@@ -252,13 +256,16 @@ def run_operational_data(spark_session, glue_context, config, args):
             operational_data.to_excel(operational_data_actual + excel_file_name, sheet_name=f'{code}', index=False)
 
         except Exception as e:
-            print(f"Error found while processing hotel_code: {code}. Error: ", e)
+            print(f"Error found while processing operational actuals hotel_code: {code}. Error: ", e)
             error_list.append(code)
 
     if len(error_list) > 0:
-        print("Error found while processing the below files.")
+        print("Error found while processing the operational actual for below hotel codes.")
         for item in error_list:
             print(item)
+        send_email_with_attachments(notify_email, None, None, None, None,
+                                    f"Processing of Operational Actual failed for  hotel codes: {', '.join(error_list)}",
+                                    "Percentage Fee Job")
     else:
         print('No Errors found')
 
@@ -344,31 +351,48 @@ def run_operational_data(spark_session, glue_context, config, args):
     budget_final = budget_final.replace({'RPD': 'Room Nights sold', 'No_of_rooms': 'Inventory'})
     budget_final = budget_final[['Hotel_Code', 'Category', f'{last_month_year}']]
 
+    error_list1 = []
     # Loop through each hotel for budget numbers
     for code in managed_hotels:
+        try:
 
-        # # hack to match the hotel codes
-        # if code in ['LTPPT', 'LTHMB']:
-        #     code = f'{code}1'
 
-        final = budget_final[budget_final['Hotel_Code'] == code]
-        final = final.fillna(0)
+            # # hack to match the hotel codes
+            # if code in ['LTPPT', 'LTHMB']:
+            #     code = f'{code}1'
 
-        last_month = pd.read_excel(f'{operational_data_budget}/{code}_operational_data_budget.xlsx')
+            final = budget_final[budget_final['Hotel_Code'] == code]
+            final = final.fillna(0)
 
-        # keep a backup to this directory
-        complete_backup_path = backup_path + f'/budget/{code}_operational_data_budget.xlsx'
-        last_month.to_excel(complete_backup_path, index=False, sheet_name=f'{code}')
-        print(f'Back up created at : {complete_backup_path}')
+            last_month = pd.read_excel(f'{operational_data_budget}/{code}_operational_data_budget.xlsx')
 
-        last_month = last_month.drop(columns=[f'{last_month_year}'])
+            # keep a backup to this directory
+            complete_backup_path = backup_path + f'/budget/{code}_operational_data_budget.xlsx'
+            last_month.to_excel(complete_backup_path, index=False, sheet_name=f'{code}')
+            print(f'Back up created at : {complete_backup_path}')
 
-        result = last_month.merge(final, on=['Hotel_Code', 'Category'], how='outer')
+            last_month = last_month.drop(columns=[f'{last_month_year}'])
 
-        budget_data = result[resulted_columns]
+            result = last_month.merge(final, on=['Hotel_Code', 'Category'], how='outer')
 
-        # Create the Excel file name for the final_tb
-        excel_file_name = f'/{code}_operational_data_budget.xlsx'
-        budget_data.to_excel(operational_data_budget + excel_file_name, sheet_name=f'{code}', index=False)
+            budget_data = result[resulted_columns]
+
+            # Create the Excel file name for the final_tb
+            excel_file_name = f'/{code}_operational_data_budget.xlsx'
+            budget_data.to_excel(operational_data_budget + excel_file_name, sheet_name=f'{code}', index=False)
+
+        except Exception as e:
+            print(f"Error found while processing operation budget for hotel_code: {code}. Error: ", e)
+            error_list1.append(code)
+
+    if len(error_list1) > 0:
+        print("Error found while processing the below files.")
+        for item in error_list1:
+            print(item)
+        send_email_with_attachments(notify_email, None, None, None, None,
+                                    f"Processing of Operational Budget failed for  hotel codes: {', '.join(error_list1)}",
+                                    "Percentage Fee Job")
+    else:
+        print('No Errors found')
 
     print('##################################### Operational Budget END #######################################')
