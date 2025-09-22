@@ -33,7 +33,7 @@ aop:
   income_mapping: /input_files/pnl/mapping_files/income_mapping.xlsx
   gl_level_budget_path: /output_files/pnl/gl_level_budget
   archive_gl_level_budget_path: /archive/pnl/gl_level_budget_path
-  budget_file_path: s3://tfs-lemontree-de/input_files/budget/aop
+  budget_file_path: /input_files/budget/aop
 
 rob:
   partitions: 1
