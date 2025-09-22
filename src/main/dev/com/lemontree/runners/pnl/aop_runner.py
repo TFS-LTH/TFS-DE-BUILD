@@ -1,7 +1,7 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_email import send_email_with_attachments
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class AOPRunner(BaseJobRunner):
     def run_job(self, spark_session, glue_context,  args) -> None:
@@ -12,23 +12,34 @@ class AOPRunner(BaseJobRunner):
 def run_aop(spark_session, glue_context, config, args):
     print("Running aop pipeline...")
 
-    hotel_list = args['hotel_list']
-    managed_hotels = [i.strip() for i in hotel_list.split(",")]
+    hotel_codes = args['hotel_codes']
+    managed_hotels = [i.strip() for i in hotel_codes.split(",")]
     print(f'managed_hotels: {managed_hotels}')
 
+    current_year = (datetime.now() - timedelta(days=30)).strftime("%Y")
+    backup_timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+
     bucket_name = config.get("bucket_name")
-    output_parquet_bucket = ''
     expense_file_path = bucket_name + config.get("expense_mapping")
-    back_up_gl_level_budget_path = bucket_name + config.get("back_up_gl_level_budget_path")
+    archive_gl_level_budget_path = bucket_name + config.get("archive_gl_level_budget_path")
     income_file_path = bucket_name + config.get("income_mapping")
     fsli_file_path = bucket_name + config.get("flsi_mapping_path")
     gl_level_budget_path = bucket_name + config.get("gl_level_budget_path")
+    budget_file_path = bucket_name + config.get("budget_file_path")
+    budget_file_path = f'{budget_file_path}/year_{current_year}/'
     notify_email = config.get("notify_email")
 
-    backup_timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    back_up_gl_level_budget_path = back_up_gl_level_budget_path + backup_timestamp
-    print(f'back_up_gl_level_budget_path: {back_up_gl_level_budget_path}')
+    print(f"bucket_name: {bucket_name}")
+    print(f"expense_file_path: {expense_file_path}")
+    print(f"income_file_path: {income_file_path}")
+    print(f"archive_gl_level_budget_path: {archive_gl_level_budget_path}")
+    print(f"fsli_file_path: {fsli_file_path}")
+    print(f"gl_level_budget_path: {gl_level_budget_path}")
+    print(f"budget_file_path: {budget_file_path}")
+    print(f"notify_email: {notify_email}")
 
+    back_up_gl_level_budget_path = archive_gl_level_budget_path + backup_timestamp
+    print(f'back_up_gl_level_budget_path: {back_up_gl_level_budget_path}')
 
     # FSLI MAPPING
     fsli_mapping = pd.read_excel(f'{fsli_file_path}')
@@ -40,10 +51,8 @@ def run_aop(spark_session, glue_context, config, args):
     error_list = []
 
     for code in managed_hotels:
-        file_ext = next(ext for ext, hotels in hotel_list.items() if code in hotels)
-
         hotel_data = [
-            (code, f'{bucket_name}/Budget_AOPs_25_26/{code} AOP FY 2025-2026.{file_ext}')
+            (code, f'{budget_file_path}{code}_aop.xlsx')
         ]
 
         try:
