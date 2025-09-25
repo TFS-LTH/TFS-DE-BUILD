@@ -1,4 +1,4 @@
-from com.lemontree.runners.rob import calculate_rob
+from com.lemontree.runners.rob.rob_runner import calculate_rob
 from tests.com.lemontree.base.base_test import BaseTest
 from datetime import date, timedelta
 from pathlib import Path
