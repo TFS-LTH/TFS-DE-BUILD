@@ -1,4 +1,6 @@
-CREATE OR REPLACE PROCEDURE sp_create_and_insert_users()
+DROP PROCEDURE IF EXISTS sp_create_and_insert_users();
+
+CREATE PROCEDURE sp_create_and_insert_users()
 AS $$
 BEGIN
     -- Create table if it doesn't exist
@@ -15,6 +17,7 @@ BEGIN
         ('alice', 'alice@example.com'),
         ('bob', 'bob@example.com'),
         ('charlie', 'charlie@example.com'),
-        ('soumyajit', 'soumyajit@example.com');
+        ('soumyajit', 'soumyajit@example.com'),
+        ('soumyajit1', 'soumyajit1@example.com');
 END;
 $$ LANGUAGE plpgsql;
