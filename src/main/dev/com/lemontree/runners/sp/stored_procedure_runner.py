@@ -1,5 +1,6 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 import os
+import pkgutil
 import redshift_connector
 
 class StoredProcedureTest(BaseJobRunner):
@@ -8,17 +9,23 @@ class StoredProcedureTest(BaseJobRunner):
 
         # === Locate your SQL file from your local package ===
         # Get path of the current script
-        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # Move up two levels to get to the 'lemontree' directory
-        ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
-        # Construct the full path to the .sql file
-        SQL_FILE = os.path.join(ROOT_DIR, 'stored_procedures', 'sp_create_and_insert_users.sql')
+        # SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        # # Move up two levels to get to the 'lemontree' directory
+        # ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
+        # # Construct the full path to the .sql file
+        # SQL_FILE = os.path.join(ROOT_DIR, 'stored_procedures', 'sp_create_and_insert_users.sql')
+        # print("Looking for SQL at:", SQL_FILE)
 
-        print("Looking for SQL at:", SQL_FILE)
 
-        # === Read SQL from file ===
-        with open(SQL_FILE, 'r') as f:
-            sql = f.read()
+        path_in_package = 'stored_procedures/sp_create_and_insert_users.sql'
+        sql_bytes = pkgutil.get_data('com.lemontree', path_in_package)
+        if not sql_bytes:
+            print(f'Loaded error from {path_in_package}')
+            raise FileNotFoundError(f"Could not find {path_in_package}")
+
+        # Convert bytes to string (assuming UTF-8 encoding)
+        sql_str = sql_bytes.decode('utf-8')
+        print(sql_str)
 
         # Connect to Redshift and execute
         conn = redshift_connector.connect(
@@ -31,7 +38,7 @@ class StoredProcedureTest(BaseJobRunner):
         cur = conn.cursor()
 
         try:
-            cur.execute(sql)
+            cur.execute(sql_bytes)
             conn.commit()
             print("Stored procedure executed successfully.")
         except Exception as e:
