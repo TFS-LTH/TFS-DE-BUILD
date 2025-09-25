@@ -38,9 +38,16 @@ class StoredProcedureTest(BaseJobRunner):
         cur = conn.cursor()
 
         try:
+            # Step 1: Create or replace the stored procedure
             cur.execute(sql_str)
             conn.commit()
+            print("Stored procedure stored successfully.")
+
+            # Step 2: Call the stored procedure to run it
+            cur.execute("CALL sp_create_and_insert_users();")  # <-- call your stored procedure
+            conn.commit()
             print("Stored procedure executed successfully.")
+
         except Exception as e:
             print(f"Error: {e}")
             conn.rollback()

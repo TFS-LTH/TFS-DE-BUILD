@@ -14,6 +14,7 @@ BEGIN
     VALUES
         ('alice', 'alice@example.com'),
         ('bob', 'bob@example.com'),
-        ('charlie', 'charlie@example.com');
+        ('charlie', 'charlie@example.com'),
+        ('soumyajit', 'soumyajit@example.com');
 END;
 $$ LANGUAGE plpgsql;
