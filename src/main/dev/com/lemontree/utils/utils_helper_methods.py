@@ -45,7 +45,7 @@ def delete_directory(dir_path):
 
 def load_config_for_job(job_name: str) -> dict:
     full_config = load_config_from_package('configs/properties.yaml')
-    job_config = full_config.get(job_name)
+    job_config = full_config.get(job_name, {})
     if not job_config:
         raise ValueError(f"No config section found for job: {job_name}")
 
