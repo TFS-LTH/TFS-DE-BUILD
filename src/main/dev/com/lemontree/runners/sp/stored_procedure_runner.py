@@ -7,16 +7,6 @@ class StoredProcedureTest(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
         self.logger.info(f"[{StoredProcedureTest.__name__}] Starting Stored Procedure Job ...")
 
-        # === Locate your SQL file from your local package ===
-        # Get path of the current script
-        # SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # # Move up two levels to get to the 'lemontree' directory
-        # ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..', '..'))
-        # # Construct the full path to the .sql file
-        # SQL_FILE = os.path.join(ROOT_DIR, 'stored_procedures', 'sp_create_and_insert_users.sql')
-        # print("Looking for SQL at:", SQL_FILE)
-
-
         path_in_package = 'stored_procedures/sp_create_and_insert_users.sql'
         sql_bytes = pkgutil.get_data('com.lemontree', path_in_package)
         if not sql_bytes:
