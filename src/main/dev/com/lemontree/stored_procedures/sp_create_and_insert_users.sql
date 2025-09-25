@@ -1,4 +1,4 @@
-DROP PROCEDURE IF EXISTS sp_create_and_insert_users();
+DROP PROCEDURE sp_create_and_insert_users();
 
 CREATE PROCEDURE sp_create_and_insert_users()
 AS $$
