@@ -38,7 +38,7 @@ class StoredProcedureTest(BaseJobRunner):
         cur = conn.cursor()
 
         try:
-            cur.execute(sql_bytes)
+            cur.execute(sql_str)
             conn.commit()
             print("Stored procedure executed successfully.")
         except Exception as e:
