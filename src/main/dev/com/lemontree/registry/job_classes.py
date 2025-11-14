@@ -1,6 +1,6 @@
 from com.lemontree.runners.local_runner import LocalJobRunner
 from com.lemontree.runners.rob import Rob
-from com.lemontree.runners.future_rob import FutureRob
+from com.lemontree.runners.future_rob_daily import FutureRob
 
 # Map job_name to runner class
 runners_map = {

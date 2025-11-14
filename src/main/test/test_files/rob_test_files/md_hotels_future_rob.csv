@@ -1,0 +1,2 @@
+hotel_id,hotel_code,hotel_name,no_of_rooms,opening_date,brand,city,owned_vs_managed,business_vs_leisure,company,company_short,src_sys_id,state,cluster,zone,sub_cluster
+27,LTHDN,"Lemon Tree Hotel - Dehradoon, IN-248006 Dehradun",49,2014-04-28,Lemon Tree Hotel,Dehradun,Managed,Leisure,Carnation,LTH,1,Uttarakhand,Preeti Mittoo,North & East,Simran Grewal
