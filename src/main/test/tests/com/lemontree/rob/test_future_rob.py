@@ -1,4 +1,5 @@
 from com.lemontree.runners.future_rob_daily import calculate_future_rob
+from com.lemontree.runners.future_rob_bulk import calculate_future_rob_backdated_bulk
 from tests.com.lemontree.base.base_test import BaseTest
 from datetime import date, timedelta
 from pathlib import Path
@@ -53,4 +54,23 @@ class TestRobFromCurrentDtToFuture(BaseTest):
 
         # check if the actual value is same as that of test data
         assert int(test_rob) == self.expected_rob
+
+
+    def test_calculate_rob_backdated_bulk(self):
+        fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(
+            str(Path(self.fact_reservation)))
+        md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(Path(self.md_mapping)))
+        protel_reservation_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.protel_reservation)))
+        source_segment_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.source_segment_df)))
+
+        # get rob using sample data
+        result = calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,
+                                      self.start_date)
+
+        if len(result) > 0:
+            assert True
+        else:
+            assert False
+
+
 
