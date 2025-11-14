@@ -15,3 +15,6 @@ local:
     spark.driver.memory: "1g"
     spark.sql.shuffle.partitions: "50"
     spark.default.parallelism: "10"
+
+robFromCurrentDtToFuture:
+  outputPath: s3://

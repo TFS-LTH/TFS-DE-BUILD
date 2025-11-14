@@ -31,9 +31,11 @@ class FutureRobBulk(BaseJobRunner):
 
         # call the method to calculate rob
         final_result = calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
-        # final_result.repartition(1).write.mode("overwrite").option("header", True).option("delimiter", ",").csv(final_output_path)
+        final_result.repartition(1).write.partitionBy('as_of_date','hotel_id').\
+            mode("overwrite").option("header", True). \
+            option("delimiter", ",").\
+            csv(final_output_path)
 
-        return final_result
 
 def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,start_date) -> DataFrame:
     # ----------------------------
@@ -136,9 +138,5 @@ def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, prote
 
         # Move to next date
         current += timedelta(days=1)
-
-    final_pdf = all_results_df.toPandas()
-    output_path = r"D:\Github\TFS-DE-BUILD\src\main\test\test_output\rob_history_output.csv"
-    final_pdf.to_csv(output_path, index=False)
 
     return all_results_df
