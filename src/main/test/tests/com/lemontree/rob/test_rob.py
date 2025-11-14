@@ -46,7 +46,5 @@ class TestRobFromCurrentDtToYearEnd(BaseTest):
         # get rob using sample data
         result = calculate_rob(fact_reservation_df, md_hotels_df, self.start_date, self.end_date, self.filter_from_date)
         test_rob = result.filter((col("Day of Stay") == self.start_date) & (col("rsrv_status") == "confirmed")).select("rob").collect()[0]["rob"]
-
         # check if the actual value is same as that of test data
         assert test_rob == self.expected_rob
-
