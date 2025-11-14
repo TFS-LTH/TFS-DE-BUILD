@@ -13,7 +13,6 @@ from datetime import date, timedelta
 
 from com.lemontree.constants.hotel_lists import hotel_list
 
-
 # Logger setup
 MSG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
 DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
