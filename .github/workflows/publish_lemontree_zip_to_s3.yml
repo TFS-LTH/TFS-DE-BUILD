@@ -44,7 +44,14 @@ jobs:
         echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
 
     - name: Upload ZIP to S3
-      run: aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree/playground/pnl/artifact/$ZIP_NAME"
+      run: |
+        if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+          echo "Uploading to production bucket"
+          aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/production/$ZIP_NAME"
+        else
+          echo "Uploading to development bucket"
+          aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/development/$ZIP_NAME"
+        fi
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

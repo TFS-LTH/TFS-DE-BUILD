@@ -1,0 +1,15 @@
+src_sgmnt_id,source,segment
+1,Airlines,Airline Crew
+2,Airlines,Airline Layover
+3,Corporate,Corporate FIT
+4,Corporate,Corporate Group
+5,CRC,CRC
+6,OTA,Indian OTA
+7,OTA,International OTA
+8,Other FIT,LT Rewards
+9,Other FIT,Non Neg GDS
+10,Other FIT,Unit Direct
+11,Other FIT,Walk In
+12,Travel Trade,Travel Trade FIT
+13,Travel Trade,Travel Trade Group
+14,Website,Website
