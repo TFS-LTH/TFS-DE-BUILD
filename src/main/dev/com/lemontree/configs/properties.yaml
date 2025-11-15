@@ -1,12 +1,14 @@
 common_configs:
-  source_bucket: source_bkt
-  destination_bucket: s3://tfs-lemontree
+  source_bucket: s3://source_bkt
+  destination_bucket: s3://tfs-lemontree-de
 
 rob:
+  job_type: spark
   partitions: 1
   output_path: /playground/pnl/rob/test
 
 local:
+  job_type: python
   db: reporting_local
   table: users_local
   filter_column: status_local

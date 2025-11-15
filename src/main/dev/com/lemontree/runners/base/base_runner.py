@@ -1,4 +1,3 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 from com.lemontree.utils.utils_helper_methods import *
@@ -20,8 +19,12 @@ class BaseJobRunner(ABC):
         # load configs for the job
         self.config = load_config_for_job(self.job_name)
 
-        # initialize spark_session and glue_context in parent class so that they are available to the child classes
-        self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
+        # initialize spark_session and glue_context in parent class for spark jobs so that they are available to the child classes
+        if str(self.config.get("job_type")).lower().strip() == "spark":
+            self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
+        else:
+            self.glue_context = None
+            self.spark_session = None
 
     def execute(self):
         self.run_job(self.spark_session, self.glue_context)
