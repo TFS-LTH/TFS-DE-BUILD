@@ -31,7 +31,10 @@ class FutureRobDaily(BaseJobRunner):
 
         # call the method to calculate rob
         final_result = calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
-        final_result.repartition(1).write.mode("overwrite").option("header", True).option("delimiter", ",").csv(final_output_path)
+        final_result.repartition(1).write.partitionBy('as_of_date', 'hotel_id'). \
+            mode("overwrite").option("header", True). \
+            option("delimiter", ","). \
+            csv(final_output_path)
 
 
 def calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,start_date) -> DataFrame:

@@ -72,7 +72,7 @@ def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, prote
                 "hotel_id",
                 "price_typ_grp",
                 "num_of_room_booked",
-                "hotel_id",
+                "hotel_code",
                 "no_of_rooms"
             )
         )
