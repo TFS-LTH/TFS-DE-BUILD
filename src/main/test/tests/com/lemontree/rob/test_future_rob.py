@@ -5,6 +5,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from pyspark.sql.functions import *
 import pytest
+from pyspark.sql import functions as F
 
 class TestRobFromCurrentDtToFuture(BaseTest):
 
@@ -50,10 +51,11 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         # get rob using sample data
         result = calculate_future_rob(fact_reservation_df, md_hotels_df,protel_reservation_df,source_segment_df,self.start_date)
 
-        test_rob = result.filter((col("stay_date") == self.start_date) & (col("hotel_id") == 27)).select("rob_curr_month").collect()[0]["rob_curr_month"]
+        test_rob_sum = result.filter((col("stay_date") == self.start_date) & (col("hotel_id") == 27)\
+            ).agg(F.sum("rob").alias("total_rob")).first()["total_rob"]
 
         # check if the actual value is same as that of test data
-        assert int(test_rob) == self.expected_rob
+        assert int(test_rob_sum) == self.expected_rob
 
 
     def test_calculate_rob_backdated_bulk(self):
@@ -67,10 +69,7 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         result = calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,
                                       self.start_date)
 
-        if len(result) > 0:
-            assert True
-        else:
-            assert False
+        assert result.count() > 0
 
 
 
