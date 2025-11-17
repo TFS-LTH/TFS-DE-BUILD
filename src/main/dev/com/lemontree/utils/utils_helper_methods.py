@@ -56,16 +56,22 @@ def load_config_for_job(job_name: str) -> dict:
     print("Config section: {}".format(merged_config))
     return merged_config
 
-def load_config_from_package(path_in_package: str) -> dict:
-    print(f'Loading configuration from {path_in_package}')
+import yaml
+import importlib.resources as pkg_resources
 
-    data = pkgutil.get_data('com.lemontree', path_in_package)
-    if not data:
-        print(f'Loaded error from {path_in_package}')
+def load_config_from_package(path_in_package: str) -> dict:
+    print(f"Loading configuration from {path_in_package}")
+
+    try:
+        package = "com.lemontree"
+        resource_path = pkg_resources.files(package).joinpath(path_in_package)
+        data = resource_path.read_bytes()
+    except Exception as e:
+        print(f"Loaded error from {path_in_package}: {e}")
         raise FileNotFoundError(f"Could not find {path_in_package}")
 
-    print(f'Config load complete from {path_in_package}')
-    return yaml.safe_load(data.decode('utf-8'))
+    print(f"Config load complete from {path_in_package}")
+    return yaml.safe_load(data.decode("utf-8"))
 
 def get_secrets_from_secret_manager(secret_name, region='ap-south-1'):
     secrets_client = boto3.client("secretsmanager", region_name=region)

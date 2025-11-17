@@ -8,4 +8,13 @@ setup(
     author="LemonTree",
     author_email="you@example.com",
     python_requires=">=3.9",
+    package_data={
+            "com.lemontree": [
+                "**/*.yaml",
+                "**/*.yml",
+                "**/*.json",
+                "**/*.conf",
+                "**/*.txt"
+            ],
+        },
 )
