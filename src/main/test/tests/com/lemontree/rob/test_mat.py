@@ -1,11 +1,14 @@
-from com.lemontree.runners.rob_runners.rob_materialized_runner.rob_materialized import calculate_mat
+from typing_extensions import override
+
+from com.lemontree.runners.rob_runners.rob_materialized_runner.rob_materialized_daily import calculate_mat
+from com.lemontree.utils.utils_helper_methods import delete_directory
 from tests.com.lemontree.base.base_test import BaseTest
 from datetime import date
 from pathlib import Path
 from pyspark.sql.functions import col
 import pytest
 
-class TestMatDynamicParams(BaseTest):
+class TestMaterializedRobDaily(BaseTest):
 
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, test_root_dir):
@@ -22,9 +25,14 @@ class TestMatDynamicParams(BaseTest):
         self.target_hotel_code = "AHRMB1"
         self.expected_rob = 665
 
+        self.test_config={
+            "output_path":r"test_outputs\rob_materialized_daily"
+        }
+
         yield
 
         print(f"[{self.__class__.__name__} teardown] Cleaning up test resources\n{'#'*50}\n")
+        delete_directory(self.test_config["output_path"])
 
     def test_calculate_mat(self):
         fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
@@ -38,6 +46,14 @@ class TestMatDynamicParams(BaseTest):
             self.filter_date,
             self.target_hotel_code
         )
+
+        output_path = str(Path(self.test_config["output_path"]))
+        print('output_path = ', output_path)
+        result_df.repartition(1).write \
+            .mode("overwrite") \
+            .partitionBy('as_of_date', 'hotel_code') \
+            .option("header", True) \
+            .csv(output_path)
 
         test_rob = result_df.filter(col("as_of_date") == self.filter_date).select("ROB").collect()[0]["ROB"]
         assert test_rob == self.expected_rob

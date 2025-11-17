@@ -7,10 +7,10 @@ from pyspark.sql.functions import *
 from datetime import date
 
 
-class Mat(BaseJobRunner):
+class RobMaterializedDaily(BaseJobRunner):
 
     def run_job(self, spark_session, glue_context) -> None:
-        self.logger.info(f"[{Mat.__name__}] Starting Local Job ...")
+        self.logger.info(f"[{RobMaterializedDaily.__name__}] Starting Local Job ...")
 
         # -----------------------------------------------------------
         # Step 0: Set destination and output path
@@ -18,7 +18,7 @@ class Mat(BaseJobRunner):
         destination_bucket = self.config.get("destination_bucket")
         output_path = self.config.get("output_path")
         final_output_path = f"{destination_bucket}{output_path}"
-        self.logger.info(f"final_output_path : {final_output_path}")
+        print(f"final_output_path : {final_output_path}")
 
         # -----------------------------------------------------------
         # Step 1: Read source data from Redshift
@@ -57,7 +57,7 @@ class Mat(BaseJobRunner):
         final_result.repartition(1).write.partitionBy('', ''). \
             mode("overwrite").option("header", True).\
             option("delimiter", ",").csv(final_output_path)
-        self.logger.info(f"[{Mat.__name__}] Job Completed Successfully.")
+        self.logger.info(f"[{RobMaterializedDaily.__name__}] Job Completed Successfully.")
 
 
 def calculate_mat(
