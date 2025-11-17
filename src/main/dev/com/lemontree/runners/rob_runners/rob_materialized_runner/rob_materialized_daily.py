@@ -30,12 +30,8 @@ class RobMaterializedDaily(BaseJobRunner):
         # -----------------------------------------------------------
         # Step 2: Read dynamic parameters from config
         # -----------------------------------------------------------
-        filter_start_date = self.config.get("filter_start_date")  # e.g., "2025-10-01"
-        target_hotel_code = self.config.get("target_hotel_code")  # optional
-
-        # Convert filter_start_date to date object if string
-        if isinstance(filter_start_date, str):
-            filter_start_date = date.fromisoformat(filter_start_date)
+        filter_start_date = self.args.get("filter_start_date")  # e.g., "2025-10-01"
+        target_hotel_code = self.args.get("target_hotel_code")  # optional
 
         self.logger.info(f"Filter Start Date: {filter_start_date}")
         self.logger.info(f"Target Hotel Code: {target_hotel_code}")
