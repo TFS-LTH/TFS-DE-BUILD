@@ -6,7 +6,7 @@ on:
       - '**'  # all branches
 
 jobs:
-  build-and-upload:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
           pip install setuptools wheel
 
-      - name: Run Pytest
+      - name: Run Tests
         run: pytest src/main/test/tests/
 
       - name: Get Safe Branch Name
@@ -32,32 +32,30 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      - name: Build Wheel
+      - name: Build Wheel with Branch Name
         run: |
           cd src/main/dev
 
-          # Clean previous builds
+          # PEP 440-compliant branch-specific version
+          BRANCH_VERSION="1.0.0+${SAFE_BRANCH}"
+          echo "Updating setup.py version to $BRANCH_VERSION"
+          sed -i "s/version=\".*\"/version=\"$BRANCH_VERSION\"/" setup.py
+
+          # Clean old builds
           rm -rf dist build *.egg-info
 
-          # Build the wheel (internal version stays PEP 440-compliant)
+          # Build the wheel
           python setup.py bdist_wheel
 
-          # Rename the wheel to a branch-friendly name
-          GENERATED_WHEEL=$(ls dist/*.whl)
-          WHEEL_NAME="lemontree-${SAFE_BRANCH}.whl"
-          mv "$GENERATED_WHEEL" "dist/$WHEEL_NAME"
+          # Get the generated wheel file
+          WHL_FILE=$(ls dist/*.whl)
 
           # Export the final wheel path
           echo "WHL_FILE=src/main/dev/dist/$WHEEL_NAME" >> $GITHUB_ENV
           echo "Built wheel: $WHEEL_NAME"
 
-      - name: Upload WHL to S3
+      - name: Upload Wheel to S3
         run: |
-          if [[ ! -f "$WHL_FILE" ]]; then
-            echo "ERROR: Wheel file not found!"
-            exit 1
-          fi
-
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/production/$(basename "$WHL_FILE")"
@@ -66,7 +64,7 @@ jobs:
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/development/$(basename "$WHL_FILE")"
           fi
         env:
-          WHL_FILE: ${{ env.WHL_FILE }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ap-south-1
+          WHL_FILE: ${{ env.WHL_FILE }}
