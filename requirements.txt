@@ -3,3 +3,5 @@ pyspark
 pytest
 PyYAML
 redshift-connector
+setuptools
+wheel

@@ -1,4 +1,4 @@
-name: publish_lemontree_zip_to_s3
+name: publish_lemontree_whl_to_s3
 
 on:
   push:
@@ -31,21 +31,21 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      - name: Create ZIP with Branch Name
+      - name: Build Wheel
         run: |
-          ZIP_NAME="lemontree-${SAFE_BRANCH}.zip"
           cd src/main/dev
-          zip -r "../../../$ZIP_NAME" . -x "*.git*" "*.venv*" "__pycache__/*"
-          echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
+          python setup.py bdist_wheel
+          WHL_FILE=$(ls dist/*.whl)
+          echo "WHL_FILE=$WHL_FILE" >> $GITHUB_ENV
 
-      - name: Upload ZIP to S3
+      - name: Upload WHL to S3
         run: |
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
-            aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/production/$ZIP_NAME"
+            aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/production/$(basename $WHL_FILE)"
           else
             echo "Uploading to development bucket"
-            aws s3 cp "$ZIP_NAME" "s3://tfs-lemontree-de/artifacts/development/$ZIP_NAME"
+            aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/development/$(basename $WHL_FILE)"
           fi
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
