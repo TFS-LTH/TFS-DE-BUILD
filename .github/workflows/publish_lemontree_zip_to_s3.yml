@@ -3,10 +3,10 @@ name: publish_lemontree_whl_to_s3
 on:
   push:
     branches:
-      - '**'   # all branches
+      - '**'  # all branches
 
 jobs:
-  test-and-deploy:
+  build-and-upload:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,6 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install setuptools wheel
 
       - name: Run Pytest
         run: pytest src/main/test/tests/
@@ -31,38 +32,32 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      - name: Build Wheel with Branch Name
+      - name: Build Wheel
         run: |
           cd src/main/dev
 
-          # Keep setup.py version PEP 440 compliant
-          sed -i 's/version=".*"/version="1.0.0"/' setup.py
-
-          # Clean old builds
+          # Clean previous builds
           rm -rf dist build *.egg-info
 
-          # Build wheel
+          # Build the wheel (internal version stays PEP 440-compliant)
           python setup.py bdist_wheel
 
-          # Find the generated wheel
-          WHL_FILE=$(ls dist/*.whl)
+          # Rename the wheel to a branch-friendly name
+          GENERATED_WHEEL=$(ls dist/*.whl)
+          WHEEL_NAME="lemontree-${SAFE_BRANCH}.whl"
+          mv "$GENERATED_WHEEL" "dist/$WHEEL_NAME"
+
+          # Export the final wheel path
+          echo "WHL_FILE=src/main/dev/dist/$WHEEL_NAME" >> $GITHUB_ENV
+          echo "Built wheel: $WHEEL_NAME"
+
+      - name: Upload WHL to S3
+        run: |
           if [[ ! -f "$WHL_FILE" ]]; then
             echo "ERROR: Wheel file not found!"
             exit 1
           fi
 
-          # Rename wheel to include branch name
-          WHEEL_NAME="lemontree-${SAFE_BRANCH}.whl"
-          mv "$WHL_FILE" "dist/$WHEEL_NAME"
-
-          # Save wheel file path to environment
-          echo "WHL_FILE=dist/$WHEEL_NAME" >> $GITHUB_ENV
-          echo "Built wheel: dist/$WHEEL_NAME"
-        env:
-          SAFE_BRANCH: ${{ env.SAFE_BRANCH }}
-
-      - name: Upload WHL to S3
-        run: |
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/production/$(basename "$WHL_FILE")"
