@@ -60,6 +60,7 @@ jobs:
       - name: Upload WHL to S3
         run: |
           set -e
+          cd src/main/dev
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/production/$(basename "$WHL_FILE")"
