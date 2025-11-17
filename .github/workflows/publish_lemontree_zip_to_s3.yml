@@ -22,6 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install setuptools wheel
 
       - name: Run Pytest
         run: pytest src/main/test/tests/
@@ -31,12 +32,19 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      - name: Build Wheel
+      - name: Build Wheel with Branch Name
         run: |
           cd src/main/dev
+          # Update version dynamically to include branch name
+          BRANCH_VERSION="1.0.0-${SAFE_BRANCH}"
+          sed -i "s/version=\".*\"/version=\"$BRANCH_VERSION\"/" setup.py
+
           python setup.py bdist_wheel
+
+          # Find the generated wheel
           WHL_FILE=$(ls dist/*.whl)
           echo "WHL_FILE=$WHL_FILE" >> $GITHUB_ENV
+          echo "Built wheel: $WHL_FILE"
 
       - name: Upload WHL to S3
         run: |
