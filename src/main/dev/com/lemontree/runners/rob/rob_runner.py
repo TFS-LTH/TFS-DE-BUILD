@@ -2,11 +2,14 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS
 from com.lemontree.utils.utils_helper_methods import calculate_week_number_dynamic_year
-from pyspark.sql.types import IntegerType, DateType
-
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import *
 from datetime import date, timedelta
+
+try:
+    from pyspark.sql.types import IntegerType, DateType
+    from pyspark.sql.functions import *
+except:
+    print("pyspark not installed")
+
 
 class Rob(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
