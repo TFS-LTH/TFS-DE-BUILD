@@ -7,6 +7,8 @@ from datetime import date
 from pathlib import Path
 from pyspark.sql.functions import col
 import pytest
+from pyspark.sql import functions as F
+
 
 class TestMaterializedRobDaily(BaseTest):
 
@@ -32,7 +34,7 @@ class TestMaterializedRobDaily(BaseTest):
         yield
 
         print(f"[{self.__class__.__name__} teardown] Cleaning up test resources\n{'#'*50}\n")
-        delete_directory(self.test_config["output_path"])
+        #delete_directory(self.test_config["output_path"])
 
     def test_calculate_mat(self):
         fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
@@ -55,5 +57,7 @@ class TestMaterializedRobDaily(BaseTest):
             .option("header", True) \
             .csv(output_path)
 
-        test_rob = result_df.filter(col("as_of_date") == self.filter_date).select("ROB").collect()[0]["ROB"]
-        assert test_rob == self.expected_rob
+        test_rob_sum = result_df.filter(col("as_of_date") == self.filter_date).\
+            groupBy("as_of_date", "hotel_code").\
+            agg(F.sum("ROB").alias("rob_sum")).collect()[0]["rob_sum"]
+        assert test_rob_sum == self.expected_rob
