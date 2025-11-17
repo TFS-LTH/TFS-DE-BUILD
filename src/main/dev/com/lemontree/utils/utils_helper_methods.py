@@ -1,6 +1,4 @@
 import argparse
-import yaml
-import pkgutil
 import shutil
 import os
 import boto3
@@ -8,7 +6,9 @@ import configparser
 import uuid
 import json
 import logging
+import yaml
 from datetime import date, timedelta
+import importlib.resources as pkg_resources
 
 # Logger setup
 MSG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
@@ -55,9 +55,6 @@ def load_config_for_job(job_name: str) -> dict:
     print("Configurations loaded for the job: {}".format(job_name))
     print("Config section: {}".format(merged_config))
     return merged_config
-
-import yaml
-import importlib.resources as pkg_resources
 
 def load_config_from_package(path_in_package: str) -> dict:
     print(f"Loading configuration from {path_in_package}")

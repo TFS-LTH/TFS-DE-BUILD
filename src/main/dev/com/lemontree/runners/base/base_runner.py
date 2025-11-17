@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 from com.lemontree.utils.utils_helper_methods import *
+from com.lemontree.configs.common_imports import F, T, DataFrame
 
 class BaseJobRunner(ABC):
+
     glue_context = None
     spark_session = None
+
+    F = F
+    T = T
+    DataFrame = DataFrame
 
     def __init__(self, args: Dict[str, Any]):
         self.args = args
@@ -28,6 +34,9 @@ class BaseJobRunner(ABC):
 
     def execute(self):
         self.run_job(self.spark_session, self.glue_context)
+
+    def not_implemented(self):
+        raise NotImplementedError()
 
     @abstractmethod
     def run_job(self, spark_session, glue_context) -> None:
