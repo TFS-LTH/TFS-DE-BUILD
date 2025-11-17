@@ -26,9 +26,6 @@ class RobMaterializedDaily(BaseJobRunner):
         fact_hotel_tags_df = read_from_redshift(glue_context, table_name=GOLD_FACT_HOTEL_TAGS, query=None)
         md_hotels_df = read_from_redshift(glue_context, table_name=MD_HOTELS, query=None)
         dim_source_segment_df = read_from_redshift(glue_context, table_name=GOLD_DIM_SOURCE_SEGMENT, query=None)
-        fact_hotel_tags_df.show()
-        md_hotels_df.show()
-        dim_source_segment_df.show()
         # -----------------------------------------------------------
         # Step 2: Read dynamic parameters from config
         # -----------------------------------------------------------
@@ -73,13 +70,21 @@ def calculate_mat(
 
     # Ensure business_date is date type
     fact_hotel_tags_df = fact_hotel_tags_df.withColumn("business_date", to_date("business_date", "yyyy-MM-dd"))
-
+    fact_hotel_tags_df.show(2,truncate=False)
     # Step 1: Apply filters
     filtered_df = fact_hotel_tags_df.filter(col("business_date") == lit(filter_start_date))
     print('5')
+    filtered_df.show(2,truncate=False)
     if target_hotel_code:
         filtered_df = filtered_df.filter(col("hotel_code") == lit(target_hotel_code))
     print('6')
+
+    a =filtered_df.\
+        join(md_hotels_df, "hotel_code", "left")
+    a.show(2, truncate=False)
+
+    b=a.join(dim_source_segment_df, "src_sgmnt_id", "left")
+    b.show(2, truncate=False)
 
     # Step 2: Join with dimension tables
     # And Step 3 transform column
