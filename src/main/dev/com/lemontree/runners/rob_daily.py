@@ -70,7 +70,8 @@ def calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_d
     # ----------------------------
     # Step 3: Keep only latest reservations and adjust dates
     # ----------------------------
-    dated_rsrv_curr_month = ranked_rsrv_curr_month.filter((F.col("rnk")==1) & (F.col("departure_dt") >= F.current_date())). \
+    dated_rsrv_curr_month = ranked_rsrv_curr_month.filter((F.col("rnk")==1) & (F.col("departure_dt") >= F.current_date())\
+                                                          & (F.col("departure_dt") > F.col("arrival_dt"))). \
         withColumn("arrival_dt_new",F.col("arrival_dt")).withColumn("departure_dt_new", F.col("departure_dt"))
 
     # ----------------------------
