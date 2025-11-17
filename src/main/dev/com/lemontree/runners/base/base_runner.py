@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 from com.lemontree.utils.utils_helper_methods import *
-from com.lemontree.utils.utils_get_context import init_context
 
 class BaseJobRunner(ABC):
     glue_context = None
@@ -21,6 +20,7 @@ class BaseJobRunner(ABC):
 
         # initialize spark_session and glue_context in parent class for spark jobs so that they are available to the child classes
         if str(self.config.get("job_type")).lower().strip() == "spark":
+            from com.lemontree.utils.utils_get_context import init_context
             self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
         else:
             self.glue_context = None
