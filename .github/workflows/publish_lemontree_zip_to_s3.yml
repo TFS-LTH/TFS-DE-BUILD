@@ -6,7 +6,7 @@ on:
       - '**'  # all branches
 
 jobs:
-  build-and-deploy:
+  test-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           pip install -r requirements.txt
           pip install setuptools wheel
 
-      - name: Run Tests
+      - name: Run Pytest
         run: pytest src/main/test/tests/
 
       - name: Get Safe Branch Name
@@ -32,29 +32,32 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      - name: Build Wheel with Branch Name
+      - name: Build Wheel
         run: |
           cd src/main/dev
 
-          # PEP 440-compliant branch-specific version
+          # Use PEP 440 compliant version: branch name as local version
           BRANCH_VERSION="1.0.0+${SAFE_BRANCH}"
           echo "Updating setup.py version to $BRANCH_VERSION"
           sed -i "s/version=\".*\"/version=\"$BRANCH_VERSION\"/" setup.py
 
-          # Clean old builds
+          # Clean previous builds
           rm -rf dist build *.egg-info
 
-          # Build the wheel
+          # Build wheel
           python setup.py bdist_wheel
 
-          # Get the generated wheel file
+          # Get exact wheel file path
           WHL_FILE=$(ls dist/*.whl)
+          if [[ ! -f "$WHL_FILE" ]]; then
+            echo "ERROR: Wheel file not found!"
+            exit 1
+          fi
+          echo "WHL_FILE=$WHL_FILE" >> $GITHUB_ENV
+          echo "Built wheel: $WHL_FILE"
+        shell: /usr/bin/bash -e
 
-          # Export the final wheel path
-          echo "WHL_FILE=src/main/dev/dist/$WHEEL_NAME" >> $GITHUB_ENV
-          echo "Built wheel: $WHEEL_NAME"
-
-      - name: Upload Wheel to S3
+      - name: Upload WHL to S3
         run: |
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
