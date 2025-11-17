@@ -37,7 +37,7 @@ jobs:
           cd src/main/dev
           
           # Use PEP 440-compliant local version identifier
-          BRANCH_VERSION="1.0.0-${SAFE_BRANCH}"
+          BRANCH_VERSION="1.0.0+${SAFE_BRANCH}"
           echo "Updating setup.py version to $BRANCH_VERSION"
           sed -i "s/version=\".*\"/version=\"$BRANCH_VERSION\"/" setup.py
 
