@@ -31,7 +31,6 @@ class RobMaterializedDaily(BaseJobRunner):
         # -----------------------------------------------------------
         filter_start_date = self.args.get("filter_start_date")  # e.g., "2025-10-01"
         target_hotel_code = self.args.get("target_hotel_code")  # optional
-        print('2')
         self.logger.info(f"Filter Start Date: {filter_start_date}")
         self.logger.info(f"Target Hotel Code: {target_hotel_code}")
 
@@ -45,7 +44,6 @@ class RobMaterializedDaily(BaseJobRunner):
             filter_start_date,
             target_hotel_code
         )
-        print('3')
 
         # -----------------------------------------------------------
         # Step 4: Write final output
@@ -54,7 +52,6 @@ class RobMaterializedDaily(BaseJobRunner):
             mode("overwrite").option("header", True).\
             option("delimiter", ",").csv(final_output_path)
         self.logger.info(f"[{RobMaterializedDaily.__name__}] Job Completed Successfully.")
-        print('4')
 
 
 def calculate_mat(
@@ -73,18 +70,9 @@ def calculate_mat(
     fact_hotel_tags_df.show(2,truncate=False)
     # Step 1: Apply filters
     filtered_df = fact_hotel_tags_df.filter(col("business_date") == lit(filter_start_date))
-    print('5')
     filtered_df.show(2,truncate=False)
     if target_hotel_code:
         filtered_df = filtered_df.filter(col("hotel_code") == lit(target_hotel_code))
-    print('6')
-
-    a =filtered_df.\
-        join(md_hotels_df, "hotel_code", "left")
-    a.show(2, truncate=False)
-
-    b=a.join(dim_source_segment_df, "src_sgmnt_id", "left")
-    b.show(2, truncate=False)
 
     # Step 2: Join with dimension tables
     # And Step 3 transform column
@@ -103,7 +91,6 @@ def calculate_mat(
             col("room_revenue")
         )
     )
-    print('7')
 
     # Step 4: Aggregate
     aggregated_df = transformed_df.groupBy(
@@ -112,9 +99,7 @@ def calculate_mat(
         sum("room_nights").alias("ROB"),
         sum("room_revenue").alias("total_room_revenue")
     )
-    print('8')
 
     # Step 5: Sort
     final_result = aggregated_df.orderBy("as_of_date")
-    print('9')
     return final_result
