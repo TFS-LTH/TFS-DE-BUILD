@@ -8,9 +8,9 @@ from pyspark.sql import functions as F
 from datetime import date, timedelta, datetime
 from pyspark.sql.window import Window
 
-class FutureRobBulk(BaseJobRunner):
+class RobBulk(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
-        self.logger.info(f"[{FutureRobBulk.__name__}] Starting Local Job ...")
+        self.logger.info(f"[{RobBulk.__name__}] Starting Local Job ...")
 
         destination_bucket = self.config.get("destination_bucket")
         output_path = self.config.get("output_path")

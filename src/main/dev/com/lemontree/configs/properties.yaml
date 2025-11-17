@@ -16,5 +16,11 @@ local:
     spark.sql.shuffle.partitions: "50"
     spark.default.parallelism: "10"
 
-robFromCurrentDtToFuture:
-  outputPath: s3://
+robDaily:
+  partitions: 1
+  output_path: /rob/rob_daily
+
+robBulk:
+  partitions: 1
+  output_path: /rob/rob_bulk
+
