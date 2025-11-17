@@ -3,13 +3,8 @@ from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS
 from com.lemontree.utils.utils_helper_methods import calculate_week_number_dynamic_year
 from datetime import date, timedelta
-
-try:
-    from pyspark.sql.types import IntegerType, DateType
-    from pyspark.sql.functions import *
-except:
-    print("pyspark not installed")
-
+from pyspark.sql.types import IntegerType, DateType
+from pyspark.sql.functions import *
 
 class Rob(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
