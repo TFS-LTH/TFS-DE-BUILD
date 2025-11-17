@@ -1,7 +1,6 @@
 import sys
 from com.lemontree.utils.utils_helper_methods import parse_cmd_line_args
 from com.lemontree.registry.job_classes import runners_map
-from com.lemontree.registry.python_job_runner import python_runners_map
 
 def main(args: dict):
     try:
@@ -11,10 +10,7 @@ def main(args: dict):
 
         print(f"Dispatching job '{job_name}'")
         # get the class name from the job to run
-        if str(args.get("job_type")).lower().strip() == "spark":
-            runner_class = runners_map.get(job_name)
-        else:
-            runner_class = python_runners_map[job_name]
+        runner_class = runners_map.get(job_name)
 
         if runner_class is None:
             raise ValueError(f"Unknown job name: {job_name}")
