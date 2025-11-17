@@ -76,8 +76,10 @@ def calculate_mat(
 
     # Step 1: Apply filters
     filtered_df = fact_hotel_tags_df.filter(col("business_date") == lit(filter_start_date))
+    print('5')
     if target_hotel_code:
         filtered_df = filtered_df.filter(col("hotel_code") == lit(target_hotel_code))
+    print('6')
 
     # Step 2: Join with dimension tables
     # And Step 3 transform column
@@ -96,6 +98,7 @@ def calculate_mat(
             col("room_revenue")
         )
     )
+    print('7')
 
     # Step 4: Aggregate
     aggregated_df = transformed_df.groupBy(
@@ -104,7 +107,9 @@ def calculate_mat(
         sum("room_nights").alias("ROB"),
         sum("room_revenue").alias("total_room_revenue")
     )
+    print('8')
 
     # Step 5: Sort
     final_result = aggregated_df.orderBy("as_of_date")
+    print('9')
     return final_result
