@@ -5,6 +5,7 @@ from com.lemontree.utils.utils_helper_methods import calculate_week_number_dynam
 from datetime import date, timedelta
 from pyspark.sql.types import IntegerType, DateType
 from pyspark.sql.functions import *
+from pyspark.sql import DataFrame
 
 class Rob(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
