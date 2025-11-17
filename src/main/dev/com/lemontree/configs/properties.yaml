@@ -24,3 +24,10 @@ robBulk:
   partitions: 1
   output_path: /input_files/rob/rob_bulk
 
+matRobDaily:
+  partitions: 1
+  output_path: /input_files/mat_rob/mat_rob_daily
+
+matRobBulk:
+  partitions: 1
+  output_path: /input_files/mat_rob/mat_rob_bulk
