@@ -7,6 +7,11 @@ rob:
   partitions: 1
   output_path: /playground/pnl/rob/test
 
+pace:
+  job_type: python
+  notify_list: mgr2_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com,ade1_tfs@lemontreehotels.com,sde1_tfs@lemontreehotels.com,pde_tfs@lemontreehotels.com
+
+
 local:
   job_type: python
   db: reporting_local
