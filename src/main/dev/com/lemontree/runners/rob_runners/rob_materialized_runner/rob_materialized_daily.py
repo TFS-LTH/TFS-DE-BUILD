@@ -26,13 +26,15 @@ class RobMaterializedDaily(BaseJobRunner):
         fact_hotel_tags_df = read_from_redshift(glue_context, table_name=GOLD_FACT_HOTEL_TAGS, query=None)
         md_hotels_df = read_from_redshift(glue_context, table_name=MD_HOTELS, query=None)
         dim_source_segment_df = read_from_redshift(glue_context, table_name=GOLD_DIM_SOURCE_SEGMENT, query=None)
-
+        fact_hotel_tags_df.show()
+        md_hotels_df.show()
+        dim_source_segment_df.show()
         # -----------------------------------------------------------
         # Step 2: Read dynamic parameters from config
         # -----------------------------------------------------------
         filter_start_date = self.args.get("filter_start_date")  # e.g., "2025-10-01"
         target_hotel_code = self.args.get("target_hotel_code")  # optional
-
+        print('2')
         self.logger.info(f"Filter Start Date: {filter_start_date}")
         self.logger.info(f"Target Hotel Code: {target_hotel_code}")
 
@@ -46,6 +48,7 @@ class RobMaterializedDaily(BaseJobRunner):
             filter_start_date,
             target_hotel_code
         )
+        print('3')
 
         # -----------------------------------------------------------
         # Step 4: Write final output
@@ -54,13 +57,14 @@ class RobMaterializedDaily(BaseJobRunner):
             mode("overwrite").option("header", True).\
             option("delimiter", ",").csv(final_output_path)
         self.logger.info(f"[{RobMaterializedDaily.__name__}] Job Completed Successfully.")
+        print('4')
 
 
 def calculate_mat(
     fact_hotel_tags_df: DataFrame,
     md_hotels_df: DataFrame,
     dim_source_segment_df: DataFrame,
-    filter_start_date: date,
+    filter_start_date: str,
     target_hotel_code: str
 ) -> DataFrame:
     """
