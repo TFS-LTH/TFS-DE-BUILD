@@ -7,5 +7,5 @@ setup(
     description="Lemontree AWS Glue Jobs",
     author="LemonTree",
     author_email="you@example.com",
-    python_requires="3.9",
+    python_requires=">=3.9",
 )
