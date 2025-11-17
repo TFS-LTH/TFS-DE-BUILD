@@ -22,7 +22,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install setuptools wheel
 
       - name: Run Pytest
         run: pytest src/main/test/tests/
@@ -32,31 +31,35 @@ jobs:
           SAFE_BRANCH=$(echo "${GITHUB_REF_NAME}" | tr '/' '-')
           echo "SAFE_BRANCH=$SAFE_BRANCH" >> $GITHUB_ENV
 
-      # 6️⃣ Build wheel
-      - name: Build Wheel with Branch Version
+      - name: Build Wheel with Branch Name
         run: |
           cd src/main/dev
 
-          # PEP 440-compliant, filesystem-safe version
-          BRANCH_VERSION="1.0.0_${SAFE_BRANCH}"
-          echo "Updating setup.py version to $BRANCH_VERSION"
-          sed -i "s/version=\".*\"/version=\"$BRANCH_VERSION\"/" setup.py
+          # Keep setup.py version PEP 440 compliant
+          sed -i 's/version=".*"/version="1.0.0"/' setup.py
 
-          # Clean previous builds
+          # Clean old builds
           rm -rf dist build *.egg-info
 
-          # Build the wheel
+          # Build wheel
           python setup.py bdist_wheel
 
-          # Ensure the wheel exists
+          # Find the generated wheel
           WHL_FILE=$(ls dist/*.whl)
           if [[ ! -f "$WHL_FILE" ]]; then
             echo "ERROR: Wheel file not found!"
             exit 1
           fi
 
-          echo "WHL_FILE=$WHL_FILE" >> $GITHUB_ENV
-          echo "Built wheel: $WHL_FILE"
+          # Rename wheel to include branch name
+          WHEEL_NAME="lemontree-${SAFE_BRANCH}.whl"
+          mv "$WHL_FILE" "dist/$WHEEL_NAME"
+
+          # Save wheel file path to environment
+          echo "WHL_FILE=dist/$WHEEL_NAME" >> $GITHUB_ENV
+          echo "Built wheel: dist/$WHEEL_NAME"
+        env:
+          SAFE_BRANCH: ${{ env.SAFE_BRANCH }}
 
       - name: Upload WHL to S3
         run: |
@@ -68,6 +71,7 @@ jobs:
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/development/$(basename "$WHL_FILE")"
           fi
         env:
+          WHL_FILE: ${{ env.WHL_FILE }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ap-south-1
