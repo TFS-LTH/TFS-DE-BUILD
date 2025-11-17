@@ -48,8 +48,8 @@ def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, prote
 
     min_date = min_load_dt.date()
     today = date.today()
-    # end_date = today - timedelta(days=1)  # current_date - 1
-    end_date = min_date + timedelta(days=4)
+    end_date = today - timedelta(days=1)  # current_date - 1
+    # end_date = min_date + timedelta(days=4)
     print("Running calculations from:", min_date, "to:", end_date)
 
     # Store results for all dates
