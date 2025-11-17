@@ -1,6 +1,6 @@
 common_configs:
   source_bucket: source_bkt
-  destination_bucket: s3://tfs-lemontree
+  destination_bucket: s3://tfs-lemontree-de
 
 rob:
   partitions: 1
@@ -18,9 +18,9 @@ local:
 
 robDaily:
   partitions: 1
-  output_path: /rob/rob_daily
+  output_path: input_files/rob/rob_daily
 
 robBulk:
   partitions: 1
-  output_path: /rob/rob_bulk
+  output_path: input_files/rob/rob_bulk
 
