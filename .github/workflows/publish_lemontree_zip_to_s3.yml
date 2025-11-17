@@ -3,7 +3,7 @@ name: publish_lemontree_whl_to_s3
 on:
   push:
     branches:
-      - '**'  # all branches
+      - '**'   # all branches
 
 jobs:
   test-and-deploy:
@@ -22,7 +22,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install setuptools wheel
 
       - name: Run Pytest
         run: pytest src/main/test/tests/
@@ -34,6 +33,7 @@ jobs:
 
       - name: Build Wheel
         run: |
+          set -e
           cd src/main/dev
 
           # Use PEP 440 compliant version: branch name as local version
@@ -55,10 +55,11 @@ jobs:
           fi
           echo "WHL_FILE=$WHL_FILE" >> $GITHUB_ENV
           echo "Built wheel: $WHL_FILE"
-        shell: /usr/bin/bash -e
+        shell: bash
 
       - name: Upload WHL to S3
         run: |
+          set -e
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "Uploading to production bucket"
             aws s3 cp "$WHL_FILE" "s3://tfs-lemontree-de/artifacts/production/$(basename "$WHL_FILE")"
@@ -70,4 +71,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ap-south-1
-          WHL_FILE: ${{ env.WHL_FILE }}
+        shell: bash
