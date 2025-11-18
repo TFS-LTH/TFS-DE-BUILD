@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 from com.lemontree.utils.utils_helper_methods import *
-from com.lemontree.configs.common_imports import F, T, DataFrame
+from com.lemontree.configs.common_imports import F, T, DataFrame, W
 
 class BaseJobRunner(ABC):
 
@@ -11,6 +11,7 @@ class BaseJobRunner(ABC):
     F = F
     T = T
     DataFrame = DataFrame
+    W = W
 
     def __init__(self, args: Dict[str, Any]):
         self.args = args

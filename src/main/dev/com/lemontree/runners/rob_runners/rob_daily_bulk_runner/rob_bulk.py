@@ -2,11 +2,7 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
 from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
-
-from pyspark.sql import DataFrame
-from pyspark.sql import functions as F
-from datetime import date, timedelta, datetime
-from pyspark.sql.window import Window
+from datetime import date, timedelta
 
 class RobBulk(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
@@ -30,17 +26,21 @@ class RobBulk(BaseJobRunner):
         self.logger.info(f"Start Date: {start_date}")
 
         # call the method to calculate rob
-        final_result = calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
+        final_result = calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
         final_result.repartition(self.config.get("partitions")).write.partitionBy('as_of_date','hotel_id').\
             mode("overwrite").option("header", True). \
             option("delimiter", ",").\
             csv(final_output_path)
 
 
-def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,start_date) -> DataFrame:
+def calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df) -> BaseJobRunner.DataFrame:
     # ----------------------------
     # Step 1: Filter reservations loaded up to today
     # ----------------------------
+
+    F = self.F
+    W = self.W
+
     protel_reservation_df = protel_reservation_df.withColumn("load_datetime", F.to_timestamp("load_datetime"))
     min_load_dt = protel_reservation_df.agg(
         F.min("load_datetime").alias("min_load_datetime")
@@ -79,7 +79,7 @@ def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, prote
         # ----------------------------
         # Step 2: Rank reservations to get the latest per booking
         # ----------------------------
-        window_spec = Window.partitionBy("bkg_num").orderBy(F.col("load_datetime").desc())
+        window_spec = W.partitionBy("bkg_num").orderBy(F.col("load_datetime").desc())
         ranked_rsrv_curr_month = filtered_rsrv_curr_month.withColumn("rnk",F.rank().over(window_spec))
 
         # ----------------------------
@@ -93,7 +93,7 @@ def calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, prote
         # ----------------------------
         dated_rsrv_curr_month = dated_rsrv_curr_month
         rns_for_rsrv_curr_month = dated_rsrv_curr_month.alias("drcm"). \
-            withColumn("stay_date",F.explode(F.sequence(F.col("arrival_dt_new").cast("date"), \
+            withColumn("stay_date",F.explode(F.sequence(F.col("arrival_dt_new").cast("date"),
                                                         F.date_sub(F.col("departure_dt_new").cast("date"), 1),
                                                         F.expr("interval 1 day")))) \
             .join(fact_reservation_df,dated_rsrv_curr_month["bkg_num"] == fact_reservation_df["source_rsrv_id"],"left")\

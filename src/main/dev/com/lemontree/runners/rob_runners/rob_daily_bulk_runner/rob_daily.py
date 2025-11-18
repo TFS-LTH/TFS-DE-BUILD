@@ -2,11 +2,7 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
 from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
-
-from pyspark.sql import DataFrame
-from pyspark.sql import functions as F
-from datetime import date, timedelta
-from pyspark.sql.window import Window
+from datetime import date
 
 class RobDaily(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
@@ -30,14 +26,17 @@ class RobDaily(BaseJobRunner):
         self.logger.info(f"Start Date: {start_date}")
 
         # call the method to calculate rob
-        final_result = calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
+        final_result = calculate_future_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
         final_result.repartition(self.config.get("partitions")).write.partitionBy('as_of_date', 'hotel_id'). \
             mode("overwrite").option("header", True). \
             option("delimiter", ","). \
             csv(final_output_path)
 
 
-def calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,start_date) -> DataFrame:
+def calculate_future_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df) -> BaseJobRunner.DataFrame:
+
+    F = self.F
+    W = self.W
     # ----------------------------
     # Step 1: Filter reservations loaded up to today
     # ----------------------------
@@ -64,7 +63,7 @@ def calculate_future_rob(fact_reservation_df, md_hotels_df, protel_reservation_d
     # ----------------------------
     # Step 2: Rank reservations to get the latest per booking
     # ----------------------------
-    window_spec = Window.partitionBy("bkg_num").orderBy(F.col("load_datetime").desc())
+    window_spec = W.partitionBy("bkg_num").orderBy(F.col("load_datetime").desc())
     ranked_rsrv_curr_month = filtered_rsrv_curr_month.withColumn("rnk",F.rank().over(window_spec))
 
     # ----------------------------

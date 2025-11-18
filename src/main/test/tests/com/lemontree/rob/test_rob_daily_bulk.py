@@ -1,11 +1,9 @@
-from com.lemontree.runners.rob_daily import calculate_future_rob
-from com.lemontree.runners.rob_bulk import calculate_future_rob_backdated_bulk
+from com.lemontree.runners.rob_runners.rob_daily_bulk_runner.rob_daily import calculate_future_rob
+from com.lemontree.runners.rob_runners.rob_daily_bulk_runner.rob_bulk import calculate_future_rob_backdated_bulk
 from tests.com.lemontree.base.base_test import BaseTest
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
-from pyspark.sql.functions import *
 import pytest
-from pyspark.sql import functions as F
 
 class TestRobFromCurrentDtToFuture(BaseTest):
 
@@ -49,10 +47,10 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         source_segment_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.source_segment_df)))
 
         # get rob using sample data
-        result = calculate_future_rob(fact_reservation_df, md_hotels_df,protel_reservation_df,source_segment_df,self.start_date)
+        result = calculate_future_rob(self, fact_reservation_df, md_hotels_df,protel_reservation_df,source_segment_df)
 
-        test_rob_sum = result.filter((col("stay_date") == self.start_date) & (col("hotel_id") == 27)\
-            ).agg(F.sum("rob").alias("total_rob")).first()["total_rob"]
+        test_rob_sum = result.filter((self.F.col("stay_date") == self.start_date) & (self.F.col("hotel_id") == 27)).\
+            agg(self.F.sum("rob").alias("total_rob")).first()["total_rob"]
 
         # check if the actual value is same as that of test data
         assert int(test_rob_sum) == self.expected_rob
@@ -66,8 +64,7 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         source_segment_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.source_segment_df)))
 
         # get rob using sample data
-        result = calculate_future_rob_backdated_bulk(fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,
-                                      self.start_date)
+        result = calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
 
         assert result.count() > 0
 

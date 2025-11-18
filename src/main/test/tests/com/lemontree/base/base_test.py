@@ -1,5 +1,5 @@
 import pytest
-from com.lemontree.configs.common_imports import F, T, DataFrame, SparkSession
+from com.lemontree.configs.common_imports import F, T, DataFrame, SparkSession, W
 
 # Try import GlueContext, else mock it for local
 try:
@@ -28,6 +28,7 @@ class BaseTest:
     F = F
     T = T
     DataFrame = DataFrame
+    W = W
 
     @pytest.fixture(scope="class", autouse=True)
     def setup_class(self, request):
