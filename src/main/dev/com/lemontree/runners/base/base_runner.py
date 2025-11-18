@@ -25,6 +25,9 @@ class BaseJobRunner(ABC):
         # load configs for the job
         self.config = load_config_for_job(self.job_name)
 
+        if self.config.get("job_type") is None:
+            raise ValueError("Missing required argument in properties.yaml: 'job_type'")
+
         # initialize spark_session and glue_context in parent class for spark jobs so that they are available to the child classes
         if str(self.config.get("job_type")).lower().strip() == "spark":
             from com.lemontree.utils.utils_get_context import init_context
