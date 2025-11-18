@@ -2,15 +2,9 @@ common_configs:
   source_bucket: s3://source_bkt
   destination_bucket: s3://tfs-lemontree-de
 
-rob:
-  job_type: spark
-  partitions: 1
-  output_path: /playground/pnl/rob/test
-
 pace:
   job_type: python
   notify_list: mgr2_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com,ade1_tfs@lemontreehotels.com,sde1_tfs@lemontreehotels.com,pde_tfs@lemontreehotels.com
-
 
 local:
   job_type: python
@@ -24,17 +18,21 @@ local:
     spark.default.parallelism: "10"
 
 robDaily:
+  job_type: spark
   partitions: 1
   output_path: /input_files/rob/rob_daily
 
 robBulk:
+  job_type: spark
   partitions: 1
   output_path: /input_files/rob/rob_bulk
 
 matRobDaily:
+  job_type: spark
   partitions: 1
   output_path: /input_files/rob/mat_rob_daily
 
 matRobBulk:
+  job_type: spark
   partitions: 1
   output_path: /input_files/rob/mat_rob_bulk
