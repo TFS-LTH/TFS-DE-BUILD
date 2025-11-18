@@ -25,7 +25,7 @@ robDaily:
 robBulk:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/rob_bulk
+  output_path: /input_files/rob/rob_daily
 
 matRobDaily:
   job_type: spark
