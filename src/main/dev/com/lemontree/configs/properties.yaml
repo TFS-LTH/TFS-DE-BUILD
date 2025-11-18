@@ -20,12 +20,12 @@ local:
 robDaily:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/rob_daily
+  output_path: /input_files/rob/rob_daily_parquet
 
 robBulk:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/rob_daily
+  output_path: /input_files/rob/rob_daily_parquet
 
 matRobDaily:
   job_type: spark
