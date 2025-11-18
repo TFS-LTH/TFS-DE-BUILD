@@ -28,7 +28,7 @@ class RobBulk(BaseJobRunner):
         # call the method to calculate rob
         final_result = calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
         final_result.repartition(self.config.get("partitions")).write.partitionBy('as_of_date','hotel_id').\
-            mode("append").option("header", True). \
+            mode("overwrite").option("header", True). \
             option("delimiter", ",").\
             csv(final_output_path)
 
@@ -54,9 +54,7 @@ def calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df,
 
     # Store results for all dates
     all_results_df = None
-    # current = min_date
-    current = today - timedelta(days=1)
-    end_date = today - timedelta(days=1)
+    current = min_date
     while current <= end_date:
         print(f"Processing date: {current}")
         filtered_rsrv_curr_month = (
