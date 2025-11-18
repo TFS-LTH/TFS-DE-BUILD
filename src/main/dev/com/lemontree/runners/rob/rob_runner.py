@@ -2,13 +2,10 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS
 from com.lemontree.utils.utils_helper_methods import calculate_week_number_dynamic_year
-from pyspark.sql.types import IntegerType, DateType
-
-from pyspark.sql import DataFrame
-from pyspark.sql.functions import *
 from datetime import date, timedelta
 
 class Rob(BaseJobRunner):
+
     def run_job(self, spark_session, glue_context) -> None:
         self.logger.info(f"[{Rob.__name__}] Starting Local Job ...")
 
@@ -33,11 +30,11 @@ class Rob(BaseJobRunner):
         self.logger.info(f"Filter From Date: {filter_from_date}")
 
         # call the method to calculate rob
-        final_result = calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filter_from_date)
+        final_result = calculate_rob(self, fact_reservation_df, md_hotels_df, start_date, end_date, filter_from_date)
         final_result.repartition(1).write.mode("overwrite").option("header", True).option("delimiter", ",").csv(final_output_path)
 
 
-def calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filter_from_date) -> DataFrame:
+def calculate_rob(self, fact_reservation_df, md_hotels_df, start_date, end_date, filter_from_date) -> BaseJobRunner.DataFrame:
 
     # --------------------------------------
     # Step 1: Filter fact_rsrv DataFrame
@@ -48,23 +45,24 @@ def calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filte
         "sk_bkg_id",
         "src_sys_bkg_id",
         "room_bkd_cnt",
-        when(col("rsrv_status") != "confirmed", "tentative").otherwise("confirmed").alias("rsrv_status"),
+        self.F.when(self.F.col("rsrv_status") != "confirmed", "tentative").otherwise("confirmed").alias("rsrv_status"),
         "rsrv_frm_dt",
         "rsrv_to_dt",
         "room_rt"
     ). \
         filter(
-        (col("rsrv_to_dt") >= lit(filter_from_date)) &
-        (col("rsrv_frm_dt") <= lit(end_date)) &
-        (col("sourcefile") == "buch") &
-        (~col("room_typ").isin(32, 33)) &
-        (~col("prc_typ_grp").isin(
+        (self.F.col("rsrv_to_dt") >= self.F.lit(filter_from_date)) &
+        (self.F.col("rsrv_frm_dt") <= self.F.lit(end_date)) &
+        (self.F.col("sourcefile") == "buch") &
+        (~self.F.col("room_typ").isin(32, 33)) &
+        (~self.F.col("prc_typ_grp").isin(
             19955, 19956, 23022, 8899, 17929, 23170, 23441, 23442, 23443, 23444,
             23445, 23446, 23447, 23448, 23449, 23450, 23451, 23455, 23456, 23508,
             681, 121
         ))
     ).withColumn(
-        "room_rvnu", (col("room_bkd_cnt").cast(IntegerType()) * col("room_rt").cast(IntegerType())) * abs(datediff(col("rsrv_to_dt"), col("rsrv_frm_dt")))
+        "room_rvnu", (self.F.col("room_bkd_cnt").cast(self.T.IntegerType()) * self.F.col("room_rt").cast(self.T.IntegerType())) *
+                     self.F.abs(self.F.datediff(self.F.col("rsrv_to_dt"), self.F.col("rsrv_frm_dt")))
     ).drop("room_rt")
 
     # ------------------------------------------------------------------------
@@ -75,14 +73,15 @@ def calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filte
     # --------------------------------------
     # Step 3: Adjust reservation dates to stay within the date window
     # --------------------------------------
+
     adjusted_reservations = joined_reservations.withColumn(
         "rsrv_frm_dt_new",
-        when(col("rsrv_frm_dt") < lit(start_date), lit(start_date))
-        .otherwise(col("rsrv_frm_dt"))
+        self.F.when(self.F.col("rsrv_frm_dt") < self.F.lit(start_date), self.F.lit(start_date))
+        .otherwise(self.F.col("rsrv_frm_dt"))
     ).withColumn(
         "rsrv_to_dt_new",
-        when(col("rsrv_to_dt") > lit(end_date), lit(end_date))
-        .otherwise(col("rsrv_to_dt"))
+        self.F.when(self.F.col("rsrv_to_dt") > self.F.lit(end_date), self.F.lit(end_date))
+        .otherwise(self.F.col("rsrv_to_dt"))
     )
 
 
@@ -91,8 +90,8 @@ def calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filte
     # --------------------------------------
     exploded_reservations = adjusted_reservations.withColumn(
         "stay_night",
-        explode(
-            sequence(col("rsrv_frm_dt_new").cast(DateType()), col("rsrv_to_dt_new").cast(DateType()) - expr("INTERVAL 1 day"))
+        self.F.explode(
+            self.F.sequence(self.F.col("rsrv_frm_dt_new").cast(self.T.DateType()), self.F.col("rsrv_to_dt_new").cast(self.T.DateType()) - self.F.expr("INTERVAL 1 day"))
         )
     )
 
@@ -102,39 +101,39 @@ def calculate_rob(fact_reservation_df, md_hotels_df, start_date, end_date, filte
 
     aggregated_result = exploded_reservations. \
         groupBy(
-        col("hotel_id"), col("hotel_code"), col("stay_night"), col("no_of_rooms"), col("rsrv_status")
+        self.F.col("hotel_id"), self.F.col("hotel_code"), self.F.col("stay_night"), self.F.col("no_of_rooms"), self.F.col("rsrv_status")
     ).agg(
-        sum("room_bkd_cnt").alias("rob"),
-        sum("room_rvnu").alias("gross_room_revenue")
+        self.F.sum("room_bkd_cnt").alias("rob"),
+        self.F.sum("room_rvnu").alias("gross_room_revenue")
     )
 
     # --------------------------------------
     # Step 6: Preparing the final format
     # --------------------------------------
 
-    week_number_udf = udf(calculate_week_number_dynamic_year, IntegerType())
+    week_number_udf = self.F.udf(calculate_week_number_dynamic_year, self.T.IntegerType())
 
     final_result = aggregated_result. \
-        withColumn("DOW", date_format(col("stay_night"), "EEEE")). \
+        withColumn("DOW", self.F.date_format(self.F.col("stay_night"), "EEEE")). \
         withColumn(
         "Occ%",
-        when(col("no_of_rooms") != 0, round((col("rob") / col("no_of_rooms")) * 100, 2)).otherwise(0)
+        self.F.when(self.F.col("no_of_rooms") != 0, self.F.round((self.F.col("rob") / self.F.col("no_of_rooms")) * 100, 2)).otherwise(0)
     ). \
         withColumn(
-        "ARR", round(col("gross_room_revenue") / col("rob"), 2)
+        "ARR", self.F.round(self.F.col("gross_room_revenue") / self.F.col("rob"), 2)
     ). \
-        withColumn("FY week number", week_number_udf(col("stay_night"))). \
+        withColumn("FY week number", week_number_udf(self.F.col("stay_night"))). \
     select(
-        col("hotel_id"),
-        col("hotel_code"),
-        col("FY week number"),
-        col("stay_night").alias("Day of Stay"),
-        col("rsrv_status"),
-        col("DOW"),
-        col("no_of_rooms").alias("Total_inventory"),
-        col("Occ%"),
-        col("rob"),
-        col("ARR")
+        self.F.col("hotel_id"),
+        self.F.col("hotel_code"),
+        self.F.col("FY week number"),
+        self.F.col("stay_night").alias("Day of Stay"),
+        self.F.col("rsrv_status"),
+        self.F.col("DOW"),
+        self.F.col("no_of_rooms").alias("Total_inventory"),
+        self.F.col("Occ%"),
+        self.F.col("rob"),
+        self.F.col("ARR")
     ). \
         orderBy("stay_night")
 

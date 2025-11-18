@@ -1,12 +1,16 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 from com.lemontree.utils.utils_helper_methods import *
-from com.lemontree.utils.utils_get_context import init_context
+from com.lemontree.configs.common_imports import F, T, DataFrame
 
 class BaseJobRunner(ABC):
+
     glue_context = None
     spark_session = None
+
+    F = F
+    T = T
+    DataFrame = DataFrame
 
     def __init__(self, args: Dict[str, Any]):
         self.args = args
@@ -20,11 +24,19 @@ class BaseJobRunner(ABC):
         # load configs for the job
         self.config = load_config_for_job(self.job_name)
 
-        # initialize spark_session and glue_context in parent class so that they are available to the child classes
-        self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
+        # initialize spark_session and glue_context in parent class for spark jobs so that they are available to the child classes
+        if str(self.config.get("job_type")).lower().strip() == "spark":
+            from com.lemontree.utils.utils_get_context import init_context
+            self.glue_context, self.spark_session = init_context(BaseJobRunner.__name__, self.config)
+        else:
+            self.glue_context = None
+            self.spark_session = None
 
     def execute(self):
         self.run_job(self.spark_session, self.glue_context)
+
+    def not_implemented(self):
+        raise NotImplementedError()
 
     @abstractmethod
     def run_job(self, spark_session, glue_context) -> None:

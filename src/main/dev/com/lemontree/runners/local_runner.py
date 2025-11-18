@@ -12,4 +12,6 @@ def run_job_local_pipeline(spark_session, glue_context, config):
     db = config.get("db")
     table = config.get("table")
     print(f"Processing {db}.{table}")
+    print(f'spark_session: {spark_session}')
+    print(f'glue_context: {glue_context}')
     # ETL logic here

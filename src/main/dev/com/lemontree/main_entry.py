@@ -11,6 +11,7 @@ def main(args: dict):
         print(f"Dispatching job '{job_name}'")
         # get the class name from the job to run
         runner_class = runners_map.get(job_name)
+
         if runner_class is None:
             raise ValueError(f"Unknown job name: {job_name}")
 
