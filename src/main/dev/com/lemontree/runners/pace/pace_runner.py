@@ -855,7 +855,7 @@ class PaceRunner(BaseJobRunner):
 
         try:
             df = process_data()
-            path = f's3://tfs-lemontree-de/dashboard/pace/{yes_year}/{yes_month}/{yes_day}/pace.csv'
+            path = f's3://tfs-lemontree-de/dashboard/pace/year={yes_year}/month={yes_month}/day={yes_day}/pace.csv'
             df.to_csv(path, index=False)
 
             glue = boto3.client('glue')
