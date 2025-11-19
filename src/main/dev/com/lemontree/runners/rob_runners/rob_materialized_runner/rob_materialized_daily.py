@@ -50,8 +50,7 @@ class RobMaterializedDaily(BaseJobRunner):
         # Step 4: Write final output
         # -----------------------------------------------------------
         final_result.repartition(1).write.partitionBy('as_of_date'). \
-            mode("append").option("header", True).\
-            option("delimiter", ",").csv(final_output_path)
+            mode("append").parquet(final_output_path)
 
         self.logger.info(f"[{RobMaterializedDaily.__name__}] Job Completed Successfully.")
 
