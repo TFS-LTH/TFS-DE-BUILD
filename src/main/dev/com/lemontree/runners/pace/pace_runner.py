@@ -1,3 +1,4 @@
+import time
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 import redshift_connector
 import pandas as pd
@@ -23,8 +24,6 @@ class PaceRunner(BaseJobRunner):
             sys.exit()
 
         db_read = 'dwh'
-        db_write = 'hotel360'
-
         host = secret['host']
         user = secret['username']
         password = secret['password']
@@ -835,67 +834,13 @@ class PaceRunner(BaseJobRunner):
 
         def write_full_to_redshift(df):
             print("Writing full data to Redshift...")
-            df.to_csv(f"s3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace_full.csv",
-                      index=False)
-            conn = redshift_connector.connect(
-                host=host,
-                database=db_write,
-                user=user,
-                password=password
-            )
-            cursor = conn.cursor()
-            redshift_table = "hotel360.public.pace"
-            iam_role = "arn:aws:iam::045101620276:role/service-role/AmazonRedshift-CommandsAccessRole-20240514T165002"
-            cols = [col.decode("utf-8") if isinstance(col, bytes) else str(col) for col in df.columns]
-            col_defs = ", ".join([f'"{col}" VARCHAR(256)' for col in cols])
-            create_table_query = f"CREATE TABLE IF NOT EXISTS {redshift_table} ({col_defs});"
-            cursor.execute(create_table_query)
-            copy_query = f"""
-                COPY {redshift_table}
-                FROM 's3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace_full.csv'
-                IAM_ROLE '{iam_role}'
-                FORMAT AS CSV
-                IGNOREHEADER 1
-                DELIMITER ',';
-            """
+            df.to_csv(f"s3://tfs-lemontree-de/dashboard/pace/{yes_year}/{yes_month}/{yes_day}/pace_full.csv", index=False)
 
-            cursor.execute(copy_query)
-            conn.commit()
-
-            cursor.close()
-            conn.close()
             print("Full data written to Redshift successfully.")
 
         def write_incremental_to_redshift(df):
             print("Writing incremental data to Redshift...")
-            df.to_csv(f"s3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace_inc.csv", index=False)
-            conn = redshift_connector.connect(
-                host=host,
-                database=db_write,
-                user=user,
-                password=password
-            )
-            cursor = conn.cursor()
-            redshift_table = "hotel360.public.pace"
-            iam_role = "arn:aws:iam::045101620276:role/service-role/AmazonRedshift-CommandsAccessRole-20240514T165002"
-            # cols = [col.decode("utf-8") if isinstance(col, bytes) else str(col) for col in df.columns]
-            # col_defs = ", ".join([f'"{col}" VARCHAR(256)' for col in cols])
-            # create_table_query = f"CREATE TABLE IF NOT EXISTS {redshift_table} ({col_defs});"
-            # cursor.execute(create_table_query)
-            copy_query = f"""
-                COPY {redshift_table}
-                FROM 's3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace_inc.csv'
-                IAM_ROLE '{iam_role}'
-                FORMAT AS CSV
-                IGNOREHEADER 1
-                DELIMITER ',';
-            """
-
-            cursor.execute(copy_query)
-            conn.commit()
-
-            cursor.close()
-            conn.close()
+            df.to_csv(f"s3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace.csv", index=False)
 
             print("Incremental data written to Redshift successfully.")
 
@@ -924,20 +869,27 @@ class PaceRunner(BaseJobRunner):
             print("Email sent! Message ID:", response['MessageId'])
 
         try:
-            if runtype == 'full':
-                df = process_data()
-                write_full_to_redshift(df)
+            df = process_data()
+            path = f's3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace.csv'
+            df.to_csv(path, index=False)
 
-            elif runtype == 'incremental':
-                print("Processing incremental data for today...")
-                df = process_data()
-                write_incremental_to_redshift(df)
+            glue = boto3.client('glue')
+            crawler_name = "tfs_pace_crawler"
+            # Start crawler
+            glue.start_crawler(Name=crawler_name)
+            print(f"Started crawler: {crawler_name}")
+            while True:
+                state = glue.get_crawler(Name=crawler_name)['Crawler']['State']
+                if state != 'RUNNING':
+                    print(f"Crawler {crawler_name} finished.")
+                    break
+                print(f"Crawler {crawler_name} still running...")
+                time.sleep(10)
 
-            mail_body = f"Hi Team,\n\nThe {runtype} run of the pace data pipeline completed successfully.\n\nWarm Regards\n\nAutomated Script"
+            mail_body = f"Hi Team,\n\nThe {runtype} run of the pace data pipeline completed successfully.\n Saved at path: {path}\nWarm Regards\n\nAutomated Script"
 
         except Exception as e:
             print("An error occurred:", str(e))
-
             mail_body = f"Hi Team,\n\nAn error occurred during the {runtype} run of the pace data pipeline:\n\n{str(e)}.\n\nWarm Regards\n\nAutomated Script"
 
         send_email(mail_body)
