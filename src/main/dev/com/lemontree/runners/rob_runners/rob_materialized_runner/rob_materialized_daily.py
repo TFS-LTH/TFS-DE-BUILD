@@ -30,7 +30,7 @@ class RobMaterializedDaily(BaseJobRunner):
         target_hotel_code = self.args.get("target_hotel_code")
 
         if filter_start_date is None:
-            filter_start_date = date.today()-timedelta(days=2)
+            filter_start_date = date.today()-timedelta(days=1)
         else:
             filter_start_date = filter_start_date.strip()
         self.logger.info(f"Filter Start Date: {filter_start_date}")
