@@ -35,4 +35,4 @@ matRobDaily:
 matRobBulk:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/mat_rob_bulk
+  output_path: /input_files/rob/mat_rob_daily
