@@ -11,7 +11,6 @@ class PaceRunner(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
         self.logger.info(f"[{PaceRunner.__name__}] Starting PaceRunner Job ...")
 
-        runtype = self.args['runtype']
         secretID = self.args['secretID']
 
         sm_client = boto3.client("secretsmanager", region_name="ap-south-1")
@@ -31,8 +30,6 @@ class PaceRunner(BaseJobRunner):
         yesterday = datetime.today() - timedelta(days=1)
         yes_date = yesterday.strftime('%Y-%m-%d')
         yes_year, yes_month, yes_day = yes_date.split('-')
-
-        print(runtype)
 
         def process_data():
             pace_sql = f"""
@@ -832,23 +829,11 @@ class PaceRunner(BaseJobRunner):
 
             return exploded_df
 
-        def write_full_to_redshift(df):
-            print("Writing full data to Redshift...")
-            df.to_csv(f"s3://tfs-lemontree-de/dashboard/pace/{yes_year}/{yes_month}/{yes_day}/pace_full.csv", index=False)
-
-            print("Full data written to Redshift successfully.")
-
-        def write_incremental_to_redshift(df):
-            print("Writing incremental data to Redshift...")
-            df.to_csv(f"s3://tfs-lemontree-de/redshift_data/pace/{yes_year}/{yes_month}/{yes_day}/pace.csv", index=False)
-
-            print("Incremental data written to Redshift successfully.")
-
         def send_email(mail_body):
             ses = boto3.client('ses', region_name='ap-south-1')
             sender = "ltdt@lemontreehotels.com"
             recipient = [e.strip() for e in self.config.get('notify_list').split(",")]
-            subject = f"Pace Data Pipeline {runtype.capitalize()} Run Status"
+            subject = f"Pace Data Pipeline Run Status"
             response = ses.send_email(
                 Source=sender,
                 Destination={
@@ -886,10 +871,10 @@ class PaceRunner(BaseJobRunner):
                 print(f"Crawler {crawler_name} still running...")
                 time.sleep(10)
 
-            mail_body = f"Hi Team,\n\nThe {runtype} run of the pace data pipeline completed successfully.\n Saved at path: {path}\nWarm Regards\n\nAutomated Script"
+            mail_body = f"Hi Team,\n\nPace data pipeline completed successfully.\n Saved at path: {path}\nWarm Regards\n\nAutomated Script"
 
         except Exception as e:
             print("An error occurred:", str(e))
-            mail_body = f"Hi Team,\n\nAn error occurred during the {runtype} run of the pace data pipeline:\n\n{str(e)}.\n\nWarm Regards\n\nAutomated Script"
+            mail_body = f"Hi Team,\n\nAn error occurred during the run of the pace data pipeline:\n\n{str(e)}.\n\nWarm Regards\n\nAutomated Script"
 
         send_email(mail_body)
