@@ -3,6 +3,7 @@ from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
 from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
 from datetime import date, timedelta
+from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobBulk(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
@@ -34,6 +35,8 @@ class RobBulk(BaseJobRunner):
             .partitionBy("as_of_date") \
             .mode("overwrite") \
             .parquet(final_output_path)
+
+        run_crawler(self.config.get("crawler_name"))
 
 
 def calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df) -> BaseJobRunner.DataFrame:

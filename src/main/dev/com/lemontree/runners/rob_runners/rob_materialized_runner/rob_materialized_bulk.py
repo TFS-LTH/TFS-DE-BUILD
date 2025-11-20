@@ -3,6 +3,7 @@ from com.lemontree.runners.rob_runners.rob_materialized_runner.rob_materialized 
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_HOTEL_TAGS, GOLD_DIM_SOURCE_SEGMENT, MD_HOTELS
 from datetime import date, timedelta
+from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobMaterializeBulk(BaseJobRunner):
 
@@ -44,10 +45,12 @@ class RobMaterializeBulk(BaseJobRunner):
                 current_date
             )
 
-            daily_result.repartition(1).write.partitionBy("as_of_date") \
+            daily_result.repartition(self.config.get("partitions")).write.partitionBy("as_of_date") \
                 .mode("append").parquet(final_output_path)
 
             current_date += timedelta(days=1)
+
+        run_crawler(self.config.get("crawler_name"))
 
         self.logger.info(f"[{RobMaterializeBulk.__name__}] Bulk MAT Job Completed Successfully.")
 

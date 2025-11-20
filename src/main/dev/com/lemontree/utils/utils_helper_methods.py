@@ -1,6 +1,7 @@
 import argparse
 import shutil
 import os
+import time
 import boto3
 import configparser
 import uuid
@@ -235,3 +236,15 @@ def calculate_week_number_dynamic_year(current_date):
         week_num = (days_diff // 7) + 1  # +1 to make week number 1-based
         return week_num
 
+def run_crawler(crawler_name):
+    glue = boto3.client('glue')
+    # Start crawler
+    glue.start_crawler(Name=crawler_name)
+    print(f"Started crawler: {crawler_name}")
+    while True:
+        state = glue.get_crawler(Name=crawler_name)['Crawler']['State']
+        if state != 'RUNNING':
+            print(f"Crawler {crawler_name} finished.")
+            break
+        print(f"Crawler {crawler_name} still running...")
+        time.sleep(10)
