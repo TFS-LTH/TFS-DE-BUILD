@@ -29,6 +29,7 @@ class BaseTest:
     T = T
     DataFrame = DataFrame
     W = W
+    args= {}
 
     @pytest.fixture(scope="class", autouse=True)
     def setup_class(self, request):

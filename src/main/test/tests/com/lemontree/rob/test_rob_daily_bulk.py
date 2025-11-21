@@ -57,6 +57,8 @@ class TestRobFromCurrentDtToFuture(BaseTest):
 
 
     def test_calculate_rob_backdated_bulk(self):
+        self.args.update({"start_date" : " "})
+        self.args.update({"end_date" : " "})
         fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(
             str(Path(self.fact_reservation)))
         md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(Path(self.md_mapping)))
