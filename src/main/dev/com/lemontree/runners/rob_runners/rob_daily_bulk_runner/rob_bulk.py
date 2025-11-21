@@ -2,7 +2,8 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
 from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+
 from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobBulk(BaseJobRunner):
@@ -24,7 +25,7 @@ class RobBulk(BaseJobRunner):
         source_segment_df = read_from_redshift(glue_context, table_name=GOLD_DIM_SOURCE_SEGMENT, query=None)
 
         start_date = date.today()
-        self.logger.info(f"Start Date: {start_date}")
+        self.logger.info(f"Today's Date: {start_date}")
 
         # call the method to calculate rob
         final_result = calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
@@ -52,9 +53,17 @@ def calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df,
         F.min("load_datetime").alias("min_load_datetime")
     ).collect()[0]["min_load_datetime"]
 
-    min_date = min_load_dt.date()
-    today = date.today()
-    end_date = today - timedelta(days=1)  # current_date - 1
+    if self.args.get("start_date").strip() == "":
+        min_date = min_load_dt.date()
+    else:
+        min_date = datetime.strptime(self.args.get("start_date"), "%Y-%m-%d")
+
+    if self.args.get("end_date").strip() == "":
+        today = date.today()
+        end_date = today - timedelta(days=1)  # current_date - 1
+    else:
+        end_date = datetime.strptime(self.args.get("end_date"), "%Y-%m-%d")
+
     # end_date = min_date + timedelta(days=4)
     print("Running calculations from:", min_date, "to:", end_date)
 

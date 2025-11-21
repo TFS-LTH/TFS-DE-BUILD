@@ -2,7 +2,7 @@ from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.runners.rob_runners.rob_materialized_runner.rob_materialized import calculate_mat
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_HOTEL_TAGS, GOLD_DIM_SOURCE_SEGMENT, MD_HOTELS
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobMaterializeBulk(BaseJobRunner):
@@ -28,8 +28,16 @@ class RobMaterializeBulk(BaseJobRunner):
         # -----------------------------------------------------------
         # Step 2: Determine date range for bulk processing
         # -----------------------------------------------------------
-        min_date = fact_hotel_tags_df.select(self.F.min("business_date")).first()[0]
-        max_date =  date.today() - timedelta(days=2)
+        if self.args.get("start_date").strip() == "":
+            min_date = fact_hotel_tags_df.select(self.F.min("business_date")).first()[0]
+        else:
+            min_date = datetime.strptime(self.args.get("start_date"), "%Y-%m-%d")
+
+        if self.args.get("end_date").strip() == "":
+            max_date =  date.today() - timedelta(days=2)
+        else:
+            max_date = datetime.strptime(self.args.get("end_date"), "%Y-%m-%d")
+
         self.logger.info(f"Processing MAT from {min_date} to {max_date}")
 
         # -----------------------------------------------------------
