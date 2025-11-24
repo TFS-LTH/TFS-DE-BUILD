@@ -1,5 +1,5 @@
 from datetime import timedelta, date
-from com.lemontree.runners.rob_runners.rob_materialized_runner.rob_materialized import calculate_mat
+from com.lemontree.runners.mat.rob_materialized import calculate_mat
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_HOTEL_TAGS, GOLD_DIM_SOURCE_SEGMENT, MD_HOTELS

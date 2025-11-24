@@ -1,9 +1,14 @@
 WITH
 numbers as (
     SELECT row_number() over() - 1 as n
-    FROM (select 1 from (select 1 union all select 1 union all select 1 union all select 1) a,
-                    (select 1 union all select 1 union all select 1 union all select 1) b,
-                    (select 1 union all select 1 union all select 1 union all select 1) c) d
+    FROM SELECT 1
+        FROM (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) a,
+             (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) b,
+             (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) c,
+             (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) d,
+             (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) e,
+             (SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1 UNION ALL SELECT 1) f
+    ) x
     LIMIT 366
 ),
 -- Filter reservations loaded up to today

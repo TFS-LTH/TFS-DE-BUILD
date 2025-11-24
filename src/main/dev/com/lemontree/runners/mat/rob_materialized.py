@@ -30,7 +30,7 @@ def calculate_mat(self, fact_hotel_tags_df, md_hotels_df, dim_source_segment_df,
     aggregated_df = transformed_df.groupBy(
          "as_of_date", "hotel_id", "hotel_code", "inventory","source_nm","segment_nm"
     ).agg(
-        F.sum("room_nights").alias("ROB"),
+        F.sum("room_nights").alias("Total_rooms"),
         F.sum("room_revenue").alias("total_room_revenue")
     )
 

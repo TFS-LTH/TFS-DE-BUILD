@@ -1,5 +1,4 @@
-from com.lemontree.runners.rob_runners.rob_daily_bulk_runner.rob_daily import calculate_future_rob
-from com.lemontree.runners.rob_runners.rob_daily_bulk_runner.rob_bulk import calculate_future_rob_backdated_bulk
+from com.lemontree.runners.rob.rob_base import calculate_rob
 from tests.com.lemontree.base.base_test import BaseTest
 from datetime import date
 from pathlib import Path
@@ -45,9 +44,9 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(Path(self.md_mapping)))
         protel_reservation_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.protel_reservation)))
         source_segment_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.source_segment_df)))
-
+        start_date = date.today()
         # get rob using sample data
-        result = calculate_future_rob(self, fact_reservation_df, md_hotels_df,protel_reservation_df,source_segment_df)
+        result = calculate_rob(self, fact_reservation_df, md_hotels_df,protel_reservation_df,source_segment_df, start_date)
 
         test_rob_sum = result.filter((self.F.col("stay_date") == self.start_date) & (self.F.col("hotel_id") == 27)).\
             agg(self.F.sum("rob").alias("total_rob")).first()["total_rob"]
@@ -64,9 +63,9 @@ class TestRobFromCurrentDtToFuture(BaseTest):
         md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(Path(self.md_mapping)))
         protel_reservation_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.protel_reservation)))
         source_segment_df = self.spark_session.read.format("csv").option("header","true").load(str(Path(self.source_segment_df)))
-
+        start_date = date(2025,11,11)
         # get rob using sample data
-        result = calculate_future_rob_backdated_bulk(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df)
+        result = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
 
         assert result.count() > 0
 
