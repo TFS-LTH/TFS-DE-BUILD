@@ -54,7 +54,7 @@ class TestMaterializedRobDaily(BaseTest):
                 (col("hotel_code") == self.target_hotel_code)
             )
             .groupBy("as_of_date", "hotel_code")
-            .agg(F.sum("ROB").alias("rob_sum"))
+            .agg(F.sum("Total_rooms").alias("rob_sum"))
             .collect()[0]["rob_sum"]
         )
         assert test_rob_sum == self.expected_rob
@@ -98,7 +98,7 @@ class TestMaterializedRobDaily(BaseTest):
                 (col("hotel_code") == self.target_hotel_code)
             )
             .groupBy("as_of_date", "hotel_code")
-            .agg(F.sum("ROB").alias("rob_sum"))
+            .agg(F.sum("Total_rooms").alias("rob_sum"))
             .collect()[0]["rob_sum"]
         )
 
