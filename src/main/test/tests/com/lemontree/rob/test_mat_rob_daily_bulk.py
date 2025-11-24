@@ -5,7 +5,7 @@ from pathlib import Path
 from pyspark.sql.functions import col
 import pytest
 from pyspark.sql import functions as F
-from com.lemontree.runners.mat.rob_materialized import calculate_mat
+from com.lemontree.runners.mat.materialized import calculate_mat
 
 class TestMaterializedRobDaily(BaseTest):
 

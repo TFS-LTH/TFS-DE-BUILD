@@ -1,8 +1,8 @@
 from com.lemontree.runners.local_runner import LocalJobRunner
 from com.lemontree.runners.rob.rob_daily import RobDaily
 from com.lemontree.runners.rob.rob_bulk import RobBulk
-from com.lemontree.runners.mat.rob_materialized_daily import RobMaterializedDaily
-from com.lemontree.runners.mat.rob_materialized_bulk import RobMaterializeBulk
+from com.lemontree.runners.mat.materialized_daily import RobMaterializedDaily
+from com.lemontree.runners.mat.materialized_bulk import RobMaterializeBulk
 from com.lemontree.runners.sp.stored_procedure_runner import StoredProcedureTest
 from com.lemontree.runners.pace.pace_runner import PaceRunner
 
