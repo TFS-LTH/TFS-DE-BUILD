@@ -62,8 +62,8 @@ class RobBulk(BaseJobRunner):
             current += timedelta(days=1)
 
         final_result = all_results_df.select(
-            "as_of_date",
-            "stay_date",
+            self.F.col("as_of_date").cast("date").alias("as_of_date"),
+            self.F.col("stay_date").cast("date").alias("stay_date"),
             "hotel_id",
             "hotel_code",
             "inventory",

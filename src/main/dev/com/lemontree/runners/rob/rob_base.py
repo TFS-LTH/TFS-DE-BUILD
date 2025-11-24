@@ -99,5 +99,4 @@ def calculate_rob(self, fact_reservation_df,md_hotels_df,protel_reservation_df,s
 
     rob = rob.replace(RESERVATION_STATUS_MAPPING, subset=["reservation_status"])
 
-    rob.write.csv("rob_csv", header=True, mode="overwrite")
     return rob

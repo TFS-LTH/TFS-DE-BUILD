@@ -30,8 +30,8 @@ class RobDaily(BaseJobRunner):
         # call the method to calculate rob
         rob = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
         final_result = rob.select(
-            "as_of_date",
-            "stay_date",
+            self.F.col("as_of_date").cast("date").alias("as_of_date"),
+            self.F.col("stay_date").cast("date").alias("stay_date"),
             "hotel_id",
             "hotel_code",
             "inventory",
