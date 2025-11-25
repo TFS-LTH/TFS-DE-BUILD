@@ -20,23 +20,23 @@ local:
 robDaily:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/rob_daily
+  output_path: /input_files/rob
   crawler_name: rob_daily_crawler
 
 robBulk:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/rob_daily
+  output_path: /input_files/rob
   crawler_name: rob_daily_crawler
 
 matRobDaily:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/mat_rob_daily
+  output_path: /input_files/mat
   crawler_name: materialized_rob
 
 matRobBulk:
   job_type: spark
   partitions: 1
-  output_path: /input_files/rob/mat_rob_daily
+  output_path: /input_files/mat
   crawler_name: materialized_rob
