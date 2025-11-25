@@ -1,0 +1,2 @@
+RFHDL1 = "LTHDL"
+KPHPN = "KPHPN"

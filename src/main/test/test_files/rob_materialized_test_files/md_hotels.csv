@@ -1,0 +1,137 @@
+hotel_id,hotel_code,hotel_name,no_of_rooms,opening_date,brand,city,owned_vs_managed,business_vs_leisure,company,company_short,src_sys_id,state,cluster,zone,sub_cluster
+-6,LTTSC,,35,2024-04-14,Lemon Tree Hotel,Chitwan,Managed,Business,Carnation,LTH,6,Nepal,Shivali Verma,North & East,Shivali Verma
+-5,KSHCN,,30,2010-12-18,Keys Select Hotel,Chennai,Managed,Business,Keys-Managed,Keys,4,Tamil Nadu,,South,
+6,LTHCC,"Lemon Tree Hotel, City Center, Gurgaon 122001, Haryana, India",61,2008-08-13,Lemon Tree Premier,Gurugram,Owned,Business,LTH,LTP,1,Harayana,,North & East,
+9,LTHAH,"Lemon Tree Hotel, Ahmedabad 380006, Gujarat, India",99,2008-11-07,Lemon Tree Hotel,Ahmedabad,Owned,Business,LTH,LTH,1,Gujarat,Dharmesh Parab,West,Bipendra Gupta
+15,LTPHY1,"Lemon Tree Premier, HITEC City, Hyderabad",267,2011-01-04,Lemon Tree Premier,Hyderabad,Owned,Business,Fleur,LTP,1,Telangana,Rahul Zetshi,South,Ryena
+16,LTHCD,"Lemon Tree Hotel, Chandigarh, IN-160002 Chandigarh",81,2012-01-26,Lemon Tree Hotel,Chandigarh,Owned,Business,LTH,LTH,1,Chandigarh,Preeti Mittoo,North & East,Simran Grewal
+19,RFHJP,"Red Fox Hotel JL Nehru Marg, Jaipur, India",183,2012-10-01,Red Fox,Jaipur,Owned,Leisure,LTH,RFH,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+20,RFHHY,"Red Fox Hotel Hyderabad, IN-500081  Hyderabad",121,2012-10-01,Red Fox,Hyderabad,Owned,Business,LTH,RFH,1,Telangana,Rahul Zetshi,South,Ryena
+23,LTPDL1,"Lemon Tree Premier, Delhi Aero City, IN-110006 New Delhi",280,2013-12-24,Lemon Tree Premier,Delhi,Owned,Business,Fleur,LTP,1,Delhi NCR,Preeti Mittoo,North & East,Pawan Sharma
+29,LTHGB,"Lemon Tree Hotel-Gachibowli, IN-500030 Hyderabad",190,2014-11-18,Lemon Tree Hotel,Hyderabad,Owned,Business,Fleur,LTH,1,Telangana,Rahul Zetshi,South,Rohit Bhardwaj
+30,LTHVD,"Lemon Tree Hotel - Vadodara, IN-390020 Vadodara",47,2015-07-16,Lemon Tree Hotel,Vadodara,Managed,Business,Carnation,LTH,1,Gujarat,Dharmesh Parab,West,Bipendra Gupta
+39,RFH60,"Red Fox Hotel Sector-60, IN- Gurgaon, Haryana",154,2017-05-01,Red Fox,Gurugram,Owned,Business,Fleur,RFH,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+40,LTH60,"Lemon Tree Hotel Sector-60, IN- Gurgaon, Haryana",104,2017-04-01,Lemon Tree Hotel,Gurugram,Owned,Business,Fleur,LTH,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+42,LTSSN,"Sandal Suites, IN-201301 Noida",185,2017-05-08,Lemon Tree Hotel,Noida,Managed,Business,Carnation,LTH,1,Delhi NCR,Preeti Mittoo,North & East,Asif Tufail
+43,LTHGT,"Lemon Tree Hotel Gangtok, IN-737101 Gangtok, Sikkim",80,2017-07-12,Lemon Tree Hotel,Gangtok,Managed,Leisure,Carnation,LTH,1,Sikkim,Rahul Zetshi,North & East,Kawshik
+44,LTHAL,"Lemon Tree Hotel Alwar, IN-301001 Alwar",40,2017-09-21,Lemon Tree Hotel,Alwar,Managed,Leisure,Carnation,LTH,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+48,LTHSR,"Lemon Tree Hotel Sohna, IN-122101 India",115,2018-01-24,Lemon Tree Hotel,Gurugram,Managed,Business,Carnation,LTH,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+51,LTHJM,"Lemon Tree Hotel, Jammu , IN- Jammu",39,2018-03-11,Lemon Tree Hotel,Jammu,Managed,Leisure,Carnation,LTH,1,Jammu & Kashmir,Preeti Mittoo,North & East,Simran Grewal
+53,LTHBD,"Lemon Tree Hotel, Baddi, IN-173205 India",49,2018-05-15,Lemon Tree Hotel,Baddi,Managed,Business,Carnation,LTH,1,Himachal Pradesh,Preeti Mittoo,North & East,Simran Grewal
+54,LTHLK,"Lemon Tree Hotel, Lucknow, IN-226023 Lucknow",51,2019-01-29,Lemon Tree Hotel,Lucknow,Managed,Business,Carnation,LTH,1,UP,Preeti Mittoo,North & East,Lakshya Parashar
+61,LTPMB1,"Lemon Tree Premier, Mumbai, IN-400059 Mumbai",303,2019-06-28,Lemon Tree Premier,Mumbai,Owned,Business,Fleur,LTP,1,Maharashtra,Kunal Kulkarni,West,Bipendra Gupta
+62,LTPKK1,"Lemon Tree Premier, Kolkatta, IN-700156 New Town",142,2019-10-14,Lemon Tree Premier,Kolkata,Owned,Business,Fleur,LTP,1,West Bengal,Rahul Zetshi,North & East,Dibya
+64,AHRUD1,"Aurika Udaipur, IND- 313001 Udaipur",139,2019-10-29,Aurika,Udaipur,Owned,Leisure,Aurika,Aurika,1,Rajasthan,Preeti Mittoo,West,Aneela Henry
+68,LTPDW,"Lemon Tree Premier, Dwarka, IN-361335 Dwarka",109,2020-08-11,Lemon Tree Premier,Dwarka,Managed,Leisure,Carnation,LTP,1,Gujarat,Shivali Verma,West,Shivali Verma
+71,LTPVJ,"Lemon Tree Premier, Vijayawada, IN-520002 Vijayawada",122,2021-01-14,Lemon Tree Premier,Vijayawada,Managed,Business,Carnation,LTP,1,Andhra Pradesh,Rahul Zetshi,South,Rahul Zetshi
+74,ZZZ**Inactive**71.RFHNK,"Red Fox Hotel Neelkanth, IN-249304 Pauri Garthwal",50,2021-08-28,,,,,,,1,,,,
+81,KPHTK,"Keys Prima Hotel Thekkady, IN-685509 Thekkady, Kumily, Iddukki, Kerala",42,2023-03-27,Keys Prima Hotel,Thekkady,Managed,Leisure,Keys-Managed,Keys,1,Kerala,Shivali Verma,South,Shivali Verma
+82,KSHHR,"Keys Hosur Road, IN-560048 Singasandra",159,2023-04-01,Keys Select Hotel,Bengaluru,Owned,Business,Keys-Owned,Keys,1,Karnataka,Rahul Zetshi,South,Shajee
+84,KSHLD,"Keys Select Ludhiana, IN-141013 Ludhiana",95,2023-04-01,Keys Select Hotel,Ludhiana,Owned,Business,Keys-Owned,Keys,1,Punjab,Preeti Mittoo,North & East,Simran Grewal
+86,KSHVZ,"Keys Select Visakhapatnam, IN- 530020 Visakhapatnam",107,2023-04-01,Keys Select Hotel,Vishakhapatnam,Owned,Business,Keys-Owned,Keys,1,Andhra Pradesh,Rahul Zetshi,South,Kaushik
+94,LTHPS,Lemon Tree Suites Whitefield Bengaluru,101,2023-09-15,Lemon Tree Hotel,Bengaluru,Managed,Business,Carnation,LTH,1,Karnataka,,South,
+99,LTHDP,"Lemon Tree Hotel Dapoli, IN- 415713 Maharashtra",50,2023-12-02,Lemon Tree Hotel,Dapoli,Managed,Business,Carnation,LTH,1,Maharashtra,Bhawishya Rituparn,West,Bhushan Kumud
+105,LTPKM,"Lemon Tree Premier Kathmandu, Nepal",102,2024-04-09,Lemon Tree Premier,Kathmandu,Franchise,Business,Carnation,LTP,7,Kathmandu,Franchised,Franchise,Franchised
+106,KSHUD,"Keys Select By Lemon Tree Hotels, IN-313001 Udaipur",48,2024-03-12,Keys Select Hotel,Udaipur,Managed,Business,Keys-Managed,Keys,1,Rajasthan,Preeti Mittoo,North & East,Aneela Henry
+12,LTHEC,"Lemon Tree Hotel, Electronic City, Bengaluru 560100, India",175,2009-11-01,Lemon Tree Hotel,Bengaluru,Owned,Business,Fleur,LTH,1,Karnataka,Rahul Zetshi,South,Shajee
+13,LTPGN1,Lemon Tree Premier -1 Leisure Valley Gurugram,81,2010-07-28,Lemon Tree Premier,Gurugram,Owned,Business,LTH,LTP,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+14,LTPBL1,Lemon Tree Premier Ulsoor Lake Bengaluru,188,2011-01-01,Lemon Tree Premier,Bengaluru,Owned,Business,LTH,LTP,1,Karnataka,Rahul Zetshi,South,Shweta Satish
+18,RFHED,"Red Fox Hotel Kondli, East Delhi, India",94,2012-09-16,Red Fox,Delhi,Owned,Business,LTH,RFH,1,Delhi NCR,Preeti Mittoo,North & East,Abnish Kumar
+25,LTPAH1,"Lemon Tree Premier Ahmedabad, IN-380001 Gujrat",63,2013-06-15,Lemon Tree Premier,Ahmedabad,Managed,Business,Carnation,LTP,1,Gujarat,Dharmesh Parab,West,Bipendra Gupta
+37,LTPGN2,"Lemon Tree Premier Leisure Valley 2, IN- 122002 Gurgaon, Haryana",80,2017-04-01,Lemon Tree Premier,Gurugram,Owned,Business,Fleur,LTP,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+38,RFHBW,"Red Fox Hotel Bhiwadi, IN-301019 Bhiwadi, Rajasthan",130,2017-01-20,Red Fox,Bhiwadi,Managed,Business,Carnation,RFH,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+46,LTPCO,"Lemon Tree Premier Jim Corbett, IN-244715 Tehsil Ramnagar, Distt. Nainital",68,2017-10-06,Lemon Tree Premier,Jim Corbett,Managed,Leisure,Carnation,LTP,1,Uttarakhand,Shivali Verma,North & East,Shivali Verma
+50,LTHSL,"Lemon Tree Hotel Siliguri,IN-734008 West Bengal",52,2018-03-05,Lemon Tree Hotel,Siliguri,Managed,Leisure,Carnation,LTH,1,West Bengal,Rahul Zetshi,North & East,Sherpa Nima
+52,LTHSG,"Lemon Tree Hotel, Srinagar, IN-190004 India",51,2018-05-02,Lemon Tree Hotel,Srinagar,Managed,Leisure,Carnation,LTH,1,Jammu & Kashmir,Shivali Verma,North & East,Shivali Verma
+56,RFHDN,"Red Fox Hotel Dehradun, IN-248001 Uttarakhand",91,2018-10-22,Red Fox,Dehradun,Owned,Leisure,Fleur,RFH,1,Uttarakhand,Preeti Mittoo,North & East,Simran Grewal
+65,LTHDXB1,"Lemon Tree Hotel, Dubai, UAE- Dubai",116,2019-12-19,Lemon Tree Hotel,Dubai,Managed,Leisure,Carnation,LTH,1,UAE,Rahul Zetshi,South,Rahul Zetshi
+67,LTHTH,"Lemon Tree Hotel Thimphu, BT- P.O. Box 507 Thimphu",27,2020-02-27,Lemon Tree Hotel,"Thimphu, Bhutan",Managed,Leisure,Carnation,LTH,1,Thimphu,Shivali Verma,North & East,Shivali Verma
+70,LTHJS,"Lemon Tree Hotel Jhansi, IN-284001 Jhansi",61,2020-11-20,Lemon Tree Hotel,Jhansi,Managed,Business,Carnation,LTH,1,UP,Preeti Mittoo,North & East,Lakshya Parashar
+73,LTPBB,"Lemon Tree Premier Bhubaneswar, IN-751023 Bhubaneswar",76,2021-04-22,Lemon Tree Premier,Bhubaneshwar,Managed,Business,Carnation,LTP,1,Odisha,Rahul Zetshi,North & East,Deepak Gupta
+83,KSHKO,"Keys Select Kochi, IN-682013 Kochi",151,2023-04-01,Keys Select Hotel,Kochi,Owned,Business,Keys-Owned,Keys,1,Kerala,Rahul Zetshi,South,Nigil Raj
+93,AHRMB1,"Aurika Hotel Mumbai, IN-400099 Maharashtra, Mumbai",669,2023-10-05,Aurika,Mumbai,Owned,Leisure,Aurika,Aurika,1,Maharashtra,Kunal Kulkarni,West,Bipendra Gupta
+95,LTHHW,"Lemon Tree Hotel, Haridwar IN-249407 Haridwar, Uttarakhand",44,2023-09-19,Lemon Tree Hotel,Haridwar,Managed,Business,Carnation,LTH,1,Uttarakhand,Shivali Verma,North & East,Shivali Verma
+97,LTHSM,Lemon Tree Hotel Sonmarg,38,2023-10-10,Lemon Tree Hotel,Sonmarg,Managed,Business,Carnation,LTH,1,Jammu & Kashmir,Shivali Verma,North & East,Shivali Verma
+101,LTHHS,"Lemon Tree Hotel Hisar, IN-125001 Hisar",50,2023-12-14,Lemon Tree Hotel,Hisar,Managed,Business,Carnation,LTH,1,Harayana,Preeti Mittoo,North & East,Lakshya Parashar
+107,LTHKS,"Lemon Tree Hotel Kasauli, IN-173204 Kasauli",34,2024-03-28,Lemon Tree Hotel,Kasauli,Managed,Business,Carnation,LTH,1,Himachal Pradesh,Shivali Verma,North & East,Shivali Verma
+109,KLHUD,"Keys Lite by Lemon Tree Hotels Urban Suites, IN-313001 Udaipur",68,2024-06-13,Keys Lite,Udaipur,Franchise,Business,Keys-Managed,Keys,1,Udaipur,Preeti Mittoo,Franchise,Aneela Henry
+110,LTRSO,"Lemon Tree Resort, Somnath, IN-362265 Gujarat",52,2024-08-07,Lemon Tree Resort,Somnath,Franchise,Leisure,Carnation,LTH,1,Somnath,Shivali Verma,Franchise,Shivali Verma
+115,KLHVD,"Keys Lite by Lemon Tree Hotels, Vadodara",63,2025-01-30,Keys Lite,Vadodara,Managed,Business,Carnation,LTH,1,Gujarat,Dharmesh Parab,West,Bipendra Gupta
+126,KLHVJ1,"Keys Lite by Lemon Tree Hotels, Vijaywada",44,2025-09-22,Keys Lite,Vijayawada,Managed,Business & Leisure,LTH,LTH,1,Andhra Pradesh,,South,
+130,LTHRC,"Lemon Tree Hotel, Ranchi",45,2025-10-15,,,,,,,1,,,,
+2,LTHUV,"Lemon Tree Hotel, Udyog Vihar, Gurgaon 122016, Haryana, India",49,2008-08-08,Lemon Tree Hotel,Gurugram,Owned,Business,LTH,LTH,1,Harayana,Preeti Mittoo,North & East,Lakshay Parashar
+4,LTHIN,"Lemon Tree Hotel, Indore 452001, Madhya Pradesh, India",100,2008-11-20,Lemon Tree Hotel,Indore,Owned,Business,LTH,LTH,1,Madhya Pradesh,Dharmesh Parab,West,Bipendra Gupta
+5,LTHHP,"Lemon Tree Hotel, Hinjawadi, Pune, Maharashtra, India",124,2008-09-17,Lemon Tree Hotel,Pune,Owned,Business,LTH,LTH,1,Maharashtra,Bhawishya Rituparn,West,Bhushan Kumud
+10,LTEDM,"Lemon Tree Hotel East Delhi Mall, Ghaziabad 201010, Uttar Pradesh, India",55,2008-07-16,Lemon Tree Hotel,Kaushambi/Ghaziabad,Owned,Business,LTH,LTH,8,Delhi NCR,Preeti Mittoo,North & East,Abnish Kumar
+22,LTHDL,"Lemon Tree Hotel, Delhi Aerocity, New Delhi, IN-110037 New Delhi",207,2013-12-24,Lemon Tree Hotel,Delhi,Owned,Business,LTH,LTH,1,Delhi NCR,,North & East,
+28,LTHCN2,"Lemon Tree Hotel, Shimona - Chennai, IN-600125 Chennai",54,2014-07-02,Lemon Tree Hotel,Chennai,Managed,Business,Carnation,LTH,1,Tamil Nadu,Rahul Zetshi,South,Prabhakaran
+31,LTHTV,"Lemon Tree Hotel Tarudhan Valley, IN-122105 Gurgaon, Haryana",70,2016-03-05,Lemon Tree Hotel,Manesar,Managed,Leisure,Carnation,LTH,1,Harayana,Shivali Verma,North & East,Shivali Verma
+32,ZZZ**Inactive**29.LTHDH,"Lemon Tree Hotel Dahej, IN-392 140 Gujrat",69,2016-02-17,,,,,,,1,,,,
+36,RFHTR,"Red Fox Hotel Trichy, IN- Trichy",80,2016-10-21,Red Fox,Tiruchirappalli (Trichy) ,Managed,Business,Carnation,RFH,1,Tamil Nadu,Rahul Zetshi,South,Benjamin
+45,LTPPT1,"Lemon Tree Premier Patna, IN-800001 Bihar",105,2017-09-01,Lemon Tree Premier,Patna,Managed,Business,Carnation,LTP,1,Bihar,Rahul Zetshi,North & East,Avinash
+49,LTHBH,"Lemon Tree Hotel, Banajara Hills, IN- 500034 India",85,2018-03-07,Lemon Tree Hotel,Hyderabad,Owned,Business,LTH,LTH,1,Telangana,Rahul Zetshi,South,Basil
+55,ZZZ**Inactive**52.RFHMJ,"Red Fox Hotel Morjim, IN-403512 Goa",111,2018-07-08,,,,,,,1,,,,
+57,LTPPN1,"Lemon Tree Premier, Pune, IND-411001 Pune",201,2018-12-05,Lemon Tree Premier,Pune,Owned,Business,Fleur,LTP,1,Maharashtra,Bhawishya Rituparn,West,Bhushan Kumud
+58,LTHVN,"Lemon Tree Hotel, Pune, IND-411014 Pune",76,2019-03-09,Lemon Tree Hotel,Pune,Managed,Business,Carnation,LTH,1,Maharashtra,Bhawishya Rituparn,West,Bhushan Kumud
+59,RFHAL,"Red Fox Hotel, Alwar, IN- 301001 Alwar",49,2019-05-06,Red Fox,Alwar,Managed,Business,Carnation,RFH,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+60,ZZZ**Inactive**57.LTHAM,"Lemon Tree Hotel, Amritsar, IND-143001 Amritsar",64,2019-04-07,,,,,,,1,,,,
+76,ZZZ**Inactive**73.KLHRK,"Keys Lite Hotel Rishikesh, IN-249192 Tapovan, Tehri Garhwal, Uttarakhand",38,2022-04-07,,,,,,,1,,,,
+77,KSHAH,"Keys Select Hotel Ahmedabad, IN-380027 Ahmedabad, Gujarat",52,2022-08-26,Keys Select Hotel,Ahmedabad,Franchise,Business,Keys-Managed,Keys,1,Ahmedabad,Franchised,Franchise,Franchised
+79,LTHMB1,"Lemon Tree Hotel, Kalina, IN-400098 Maharashtra",63,2022-10-14,Lemon Tree Hotel,Mumbai,Managed,Business,Carnation,LTH,1,Maharashtra,,West,
+88,KSHTM,"Keys Select, Thiruvananthapuram, IN-695001 Thiruvananthapuram",101,2023-04-01,Keys Select Hotel,Trivandrum,Owned,Business,Keys-Owned,Keys,1,Kerala,Rahul Zetshi,South,Siddharth
+90,LTHBP,"Lemon Tree Hotel Bhopal, IN-462011 Bhopal",46,2023-06-02,Lemon Tree Hotel,Bhopal,Managed,Business,Carnation,LTH,1,Madhya Pradesh,Dharmesh Parab,West,Bipendra Gupta
+92,LTHRJ,"Lemon Tree Hotel Rajkot, IN-360005 Rajkot, Gujarat",45,2023-08-18,Lemon Tree Hotel,Rajkot,Managed,Business,Carnation,LTH,1,Gujarat,Dharmesh Parab,West,Dharmesh Parab
+98,LTHHB,"Lemon Tree Hotel Hubli, IN-580031 Hubli",65,2023-12-01,Lemon Tree Hotel,Hubli,Managed,Business,Carnation,LTH,1,Karnataka,Rahul Zetshi,South,Shoieb
+102,KLHDP,"Keys Lite Hotel, 415713, Dapoli",20,2024-01-25,Keys Lite,Dapoli,Managed,Business,Keys-Managed,Keys,1,Maharashtra,Bhawishya Rituparn,West,Bhushan Kumud
+104,LTRKG,"Lemon Tree Resort, Kumbhalgarh, India",59,2024-02-29,Lemon Tree Hotel,Kumbhalgarh,Franchise,Business,Carnation,LTH,1,Kumbhalgarh,Franchised,Franchise,Franchised
+108,LTHRK,"Lemon Tree Hotel Rishikesh, Uttarakhand-249202, India",126,2024-04-07,Lemon Tree Hotel,Rishikesh,Managed,Business,Carnation,LTH,1,Uttarakhand,Shivali Verma,North & East,Shivali Verma
+111,LTHND,Lemon Tree Hotel Noida,40,2024-08-12,Lemon Tree Hotel,Noida,Managed,Business,Carnation,LTH,1,Delhi NCR,Preeti Mittoo,North & East,Asif Tufail
+118,LTHAN,"Lemon Tree Hotel, Anjuna",51,2025-05-07,Lemon Tree Hotel,Goa,Managed,Business & Leisure,Carnation,LTH,1,Goa,,West,
+123,KSHKF,"Keys Select By Lemon Tree Hotels, Kufri",49,2025-07-25,Keys Select Hotel,Kufri,Managed,Leisure,Keys-Managed,LTH,1,Himachal Pradesh,,North & East,
+128,LTPTP,"Lemon Tree Premier, Tirupati",111,2025-10-02,Lemon Tree Premier,Tirupati,Managed,Business & Leisure,LTH,LTP,1,Andhra Pradesh,,South,
+133,LTHDN1,"Lemon Tree Hotel, Mall of Dehradun",98,2025-11-03,,,,,,,1,,,,
+113,LTRMS,"Lemon Tree Resort, Mussoorie",44,2024-09-19,Lemon Tree Resort,Mussoorie,Managed,Leisure,Carnation,LTH,1,Uttarakhand,Shivali Verma,North & East,Shivali Verma
+114,LTRTH,"Lemon Tree Resort, Thimphu",49,2024-12-12,Lemon Tree Resort,"Thimphu, Bhutan",Managed,Leisure,Carnation,LTH,1,Thimphu,Shivali Verma,North & East,Shivali Verma
+117,LTHPN1,"Lemon Tree Hotel Chinchwad, Pune",117,2025-04-01,Lemon Tree Hotel,Pune,Managed,Business,Carnation,LTH,1,Maharashtra,,West,
+119,LTHMB2,"Lemon Tree Hotel, Mira Road Mumbai",92,2025-05-01,Lemon Tree Hotel,Mumbai,Managed,Business & Leisure,Carnation,LTH,1,Maharashtra,,West,
+120,LTHJN,"Lemon Tree Hotel, Jamnagar",45,2025-05-09,Lemon Tree Hotel,Jamnagar,Managed,Business,Carnation,LTH,1,Gujarat,,West,
+121,LTHGO,"Lemon Tree Hotel, Arpora",56,2025-05-20,Lemon Tree Hotel,Goa,Managed,Leisure,Carnation,LTH,1,Goa,,West,
+125,LTHCH,"Lemon Tree Hotel, Chandausi",61,2025-08-06,Lemon Tree Hotel,Chandausi,Managed,Business,Carnation,LTH,1,UP,,North & East,
+127,LTPNM,"Lemon Tree Premier, Navi Mumbai",67,2025-10-01,Lemon Tree Premier,Navi Mumbai,Managed,Buisness,LTH,LTP,1,Maharashtra,,West,
+132,LTHMO,"Lemon Tree Hotel, Morbi",69,2025-10-29,,,,,,,1,,,,
+-7,LTHPB,,48,2017-08-20,Lemon Tree Hotel,Portblair,Managed,Business,Carnation,LTH,5,A&N Islands,Rahul Zetshi,South,Shouvik
+-4,KLHGN,,25,2017-11-17,Keys Lite,Gurugram,Managed,Business,Keys-Managed,Keys,3,Harayana,,North & East,
+1,LTWRB,"The Lemon Tree Hotel Company CO, New Delhi 110020, India",33,2012-10-01,Lemon Tree Hotel,Bandhavgarh,Owned,Business,Fleur,LTH,2,Madhya Pradesh,Shivali Verma,West,Shivali Verma
+7,LTHCN,"Lemon Tree Hotel, Chennai 600032, Tamil Nadu, India",108,2009-02-10,Lemon Tree Hotel,Chennai,Owned,Business,LTH,LTH,1,Tamil Nadu,Rahul Zetshi,South,Karthikeyam
+8,LTHAR,"Lemon Tree Hotel, Aurangabad 431003, Maharastra, India",102,2008-10-01,Lemon Tree Hotel,Aurangabad,Owned,Business,LTH,LTH,1,Maharashtra,Sohail Khan,West,Saket Morey
+11,LTABR,"Lemon Tree Amarante Beach Resort, Bardez 403515, Goa, India",65,2008-09-03,Lemon Tree Hotel,Goa,Owned,Leisure,Fleur,LTH,1,Goa,Aaditya Verma,West,Bhushan Kumud
+21,LTVLR,"Lemon Tree Vembanad Lake Resort, Alleppey 688525, Kerala, India",27,2012-10-01,Lemon Tree Hotel,Muhamma (Kerala),Owned,Leisure,LTH,LTH,1,Kerala,Shivali Verma,South,Shivali Verma
+24,LTPJP1,"Lemon Tree Premier, Jaipur, IN-302016 Jaipur",108,2013-04-01,Lemon Tree Premier,Jaipur,Managed,Leisure,Carnation,LTP,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+26,LTHWF,"Lemon Tree Hotel, Whitefield, Bengaluru, IN-560066",130,2013-09-01,Lemon Tree Hotel,Bengaluru,Owned,Business,Fleur,LTH,1,Karnataka,Rahul Zetshi,South,Rahul Zetshi
+27,LTHDN,"Lemon Tree Hotel - Dehradoon, IN-248006 Dehradun",49,2014-04-28,Lemon Tree Hotel,Dehradun,Managed,Leisure,Carnation,LTH,1,Uttarakhand,Preeti Mittoo,North & East,Simran Grewal
+33,ZZZ**Inactive**30.RFHCD,"Red Fox Hotel Chandigarh, IN-160001 Chandigarh, Punjab",102,2016-08-08,,,,,,,1,,,,
+34,ZZZ**Inactive**31.LTHPR,"Lemon Tree Hotel Purulia, IN-723101 Purulia",51,,,,,,,,1,,,,
+35,LTHKT,"Lemon Tree Hotel Katra, IN-182301 Katra",70,2016-09-21,Lemon Tree Hotel,Katra,Managed,Leisure,Carnation,LTH,1,Jammu & Kashmir,Shivali Verma,North & East,Shivali Verma
+41,LTHCA,"Candolim Goa, IN-403515 Goa",34,2017-04-01,Lemon Tree Hotel,Goa,Owned,Leisure,Fleur,LTH,1,Goa,Aaditya Verma,West,Bhushan Kumud
+47,LTHCB,"Lemon Tree Hotel Coimbatore, IN-641048 Coimbatore TN",61,2017-11-03,Lemon Tree Hotel,Coimbatore,Managed,Business,Carnation,LTH,1,Tamil Nadu,Rahul Zetshi,South,Jaishree
+63,RFHVJ,"Red Fox Hotel Vijayawada, IN-520002 Vijayawada",101,2019-11-28,Red Fox,Vijayawada,Managed,Business,Carnation,RFH,1,Andhra Pradesh,Rahul Zetshi,South,Suman
+66,LTPRK,"Lemon Tree Premier, Rishikesh, IND-249201 Uttarakhand",67,2020-01-14,Lemon Tree Premier,Rishikesh,Managed,Leisure,Carnation,LTP,1,Uttarakhand,Shivali Verma,North & East,Shivali Verma
+69,LTLLB,"Lazy Lagoon, A Lemon Tree Resort, IND-403518 North Goa",44,2020-10-07,Lemon Tree Hotel,Goa,Managed,Leisure,Carnation,LTH,1,Goa,Aaditya Verma,West,Bhushan Kumud
+72,LTHAI,"Lemon Tree Hotel Aligarh, IN-202001 Aligarh",68,2021-01-25,Lemon Tree Hotel,Aligarh,Managed,Business,Carnation,LTH,1,UP,Preeti Mittoo,North & East,Lakshya Parashar
+75,ZZZ**Inactive**72.AHRCG,"Aurika Hotel Coorg, IN-Gallibeedu Panchayat",55,2021-09-16,,,,,,,1,,,,
+78,KLHVZ,"Keys Lite Hotel Visakhapatnam, IN-530020 Visakhapatnam",44,2022-10-05,Keys Lite,Vishakhapatnam,Managed,Business,Keys-Managed,Keys,1,Andhra Pradesh,Rahul Zetshi,South,Kaushik
+80,LTHMW,"Lemon Tree Hotel, Mukteshwar, IN-263132 Tesil-Dhar",25,2022-12-20,Lemon Tree Hotel,Mukhteshwar,Franchise,Leisure,Carnation,LTH,1,Mukhteshwar,Shivali Verma,Franchise,Shivali Verma
+85,KPHPN,"Keys Prima Pimpri, IN-411018 Pune",101,2023-04-01,Keys Select Hotel,Pune,Owned,Business,Keys-Owned,Keys,1,Maharashtra,,West,
+87,KSHWF,"Keys Select Whitefield, IN-560048 Industrial Area, Bengaluru",222,2023-04-01,Keys Select Hotel,Bengaluru,Owned,Business,Keys-Owned,Keys,1,Karnataka,Rahul Zetshi,South,Naushad
+89,LTHAG,"Lemon Tree Hotel Agra, IN-282002 Agra, Uttar Pradesh",60,2023-06-02,Lemon Tree Hotel,Agra,Managed,Leisure,Carnation,LTH,1,UP,Preeti Mittoo,North & East,Lakshya Parashar
+91,ZZZ**Inactive**88.LTHMN,"Lemon Tree Hotel, Manali, IN-175129 Himachal Pradesh",34,2023-07-01,,,,,,,1,,,,
+96,LTHMG,"Lemon Tree Hotel, McLeodganj, IN-176216  Himachal Pradesh",39,2023-09-21,Lemon Tree Hotel,McLeodganj,Franchise,Business,Carnation,LTH,1,McLeodganj,Franchised,Franchise,Franchised
+100,LTPMB2,"Lemon Tree Premier Malad, IN-400064 Maharashtra",93,2023-12-15,Lemon Tree Premier,Mumbai,Managed,Business,Carnation,LTP,1,Maharashtra,Kunal Kulkarni,West,Bipendra Gupta
+103,LTHJR,"Lemon Tree Hotel Center Point, Jamshedpur",42,2024-07-15,Lemon Tree Hotel,Jamshedpur,Managed,Business,Carnation,LTH,1,Jharkhand,Rahul Zetshi,North & East,Jhangir
+112,LTRKA,"Lemon Tree Wildlife Resort, Kanha",15,2024-08-08,Lemon Tree Hotel,Balaghat,Managed,Leisure,Carnation,LTH,1,Madhya Pradesh,,West,
+116,KPHKR,"Keys Prima by Lemon Tree Hotel, Kota",58,2025-03-21,Keys Prima Hotel,kota,Managed,Business,Carnation,Keys,1,Rajasthan,Preeti Mittoo,North & East,Lakshya Parashar
+122,LTHER,"Lemon Tree Hotel, Erode",65,2025-07-15,Lemon Tree Hotel,Erode,Managed,Business,Carnation,LTH,1,Tamil Nadu,,South,
+124,KLHBS,"Keys Lite Hotel by Lemon Tree, Banswara",54,2025-05-01,Keys Lite,Banswara,Managed,Business,Keys-Managed,LTH,1,Rajasthan,,North & East,
+129,KLHJP,"Keys Lite by Lemon Tree Hotels, Jaipur",50,2025-10-09,Keys Lite,Jaipur,Managed,Business & Leisure,LTH,LTH,1,Rajasthan,,North,
+131,LTHMT,"Lemon Tree Hotel, Motihari",32,2025-10-31,,,,,,,1,,,,
+134,LTPTM,"Lemon Tree Premier, Thiruvananthapuram",80,2025-11-07,,,,,,,1,,,,

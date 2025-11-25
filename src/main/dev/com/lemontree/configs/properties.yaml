@@ -1,12 +1,13 @@
 common_configs:
-  source_bucket: source_bkt
-  destination_bucket: s3://tfs-lemontree
+  source_bucket: s3://source_bkt
+  destination_bucket: s3://tfs-lemontree-de
 
-rob:
-  partitions: 1
-  output_path: /playground/pnl/rob/test
+pace:
+  job_type: python
+  notify_list: mgr2_tfs@lemontreehotels.com,de1_tfs@lemontreehotels.com,ade1_tfs@lemontreehotels.com,sde1_tfs@lemontreehotels.com,pde_tfs@lemontreehotels.com
 
 local:
+  job_type: python
   db: reporting_local
   table: users_local
   filter_column: status_local
@@ -15,3 +16,27 @@ local:
     spark.driver.memory: "1g"
     spark.sql.shuffle.partitions: "50"
     spark.default.parallelism: "10"
+
+robDaily:
+  job_type: spark
+  partitions: 1
+  output_path: /input_files/rob
+  crawler_name: rob_daily_crawler
+
+robBulk:
+  job_type: spark
+  partitions: 1
+  output_path: /input_files/rob
+  crawler_name: rob_daily_crawler
+
+matRobDaily:
+  job_type: spark
+  partitions: 1
+  output_path: /input_files/mat
+  crawler_name: materialized_rob
+
+matRobBulk:
+  job_type: spark
+  partitions: 1
+  output_path: /input_files/mat
+  crawler_name: materialized_rob

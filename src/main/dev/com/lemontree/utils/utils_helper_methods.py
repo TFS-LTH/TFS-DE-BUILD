@@ -1,14 +1,15 @@
 import argparse
-import yaml
-import pkgutil
 import shutil
 import os
+import time
 import boto3
 import configparser
 import uuid
 import json
 import logging
+import yaml
 from datetime import date, timedelta
+import importlib.resources as pkg_resources
 
 # Logger setup
 MSG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
@@ -45,9 +46,9 @@ def delete_directory(dir_path):
 
 def load_config_for_job(job_name: str) -> dict:
     full_config = load_config_from_package('configs/properties.yaml')
-    job_config = full_config.get(job_name)
-    if not job_config:
-        raise ValueError(f"No config section found for job: {job_name}")
+    job_config = full_config.get(job_name, {})
+    # if not job_config:
+    #     raise ValueError(f"No config section found for job: {job_name}")
 
     # combining common_configs with job specific configs
     common_config = full_config['common_configs']
@@ -57,15 +58,18 @@ def load_config_for_job(job_name: str) -> dict:
     return merged_config
 
 def load_config_from_package(path_in_package: str) -> dict:
-    print(f'Loading configuration from {path_in_package}')
+    print(f"Loading configuration from {path_in_package}")
 
-    data = pkgutil.get_data('com.lemontree', path_in_package)
-    if not data:
-        print(f'Loaded error from {path_in_package}')
+    try:
+        package = "com.lemontree"
+        resource_path = pkg_resources.files(package).joinpath(path_in_package)
+        data = resource_path.read_bytes()
+    except Exception as e:
+        print(f"Loaded error from {path_in_package}: {e}")
         raise FileNotFoundError(f"Could not find {path_in_package}")
 
-    print(f'Config load complete from {path_in_package}')
-    return yaml.safe_load(data.decode('utf-8'))
+    print(f"Config load complete from {path_in_package}")
+    return yaml.safe_load(data.decode("utf-8"))
 
 def get_secrets_from_secret_manager(secret_name, region='ap-south-1'):
     secrets_client = boto3.client("secretsmanager", region_name=region)
@@ -232,3 +236,15 @@ def calculate_week_number_dynamic_year(current_date):
         week_num = (days_diff // 7) + 1  # +1 to make week number 1-based
         return week_num
 
+def run_crawler(crawler_name):
+    glue = boto3.client('glue')
+    # Start crawler
+    glue.start_crawler(Name=crawler_name)
+    print(f"Started crawler: {crawler_name}")
+    while True:
+        state = glue.get_crawler(Name=crawler_name)['Crawler']['State']
+        if state != 'RUNNING':
+            print(f"Crawler {crawler_name} finished.")
+            break
+        print(f"Crawler {crawler_name} still running...")
+        time.sleep(10)
