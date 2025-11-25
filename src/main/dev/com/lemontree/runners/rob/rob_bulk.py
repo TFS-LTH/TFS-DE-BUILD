@@ -1,10 +1,8 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
-from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
 from datetime import date, timedelta, datetime
-from rob_base import calculate_rob
-
+from com.lemontree.runners.rob.rob_base import calculate_rob
 from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobBulk(BaseJobRunner):
@@ -28,7 +26,7 @@ class RobBulk(BaseJobRunner):
         start_date = date.today()
         self.logger.info(f"Today's Date: {start_date}")
 
-        protel_reservation_df = protel_reservation_df.withColumn("load_datetime", F.to_timestamp("load_datetime"))
+        protel_reservation_df = protel_reservation_df.withColumn("load_datetime", self.F.to_timestamp("load_datetime"))
         min_load_dt = protel_reservation_df.agg(
             self.F.min("load_datetime").alias("min_load_datetime")
         ).collect()[0]["min_load_datetime"]
