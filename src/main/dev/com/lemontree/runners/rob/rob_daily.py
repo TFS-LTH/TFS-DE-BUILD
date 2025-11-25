@@ -28,20 +28,8 @@ class RobDaily(BaseJobRunner):
 
         # call the method to calculate rob
         rob = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
-        final_result = rob.select(
-            self.F.col("as_of_date").cast("date").alias("as_of_date"),
-            self.F.col("stay_date").cast("date").alias("stay_date"),
-            "hotel_id",
-            "hotel_code",
-            "inventory",
-            "source_nm",
-            "segment_nm",
-            "reservation_status",
-            "room_revenue",
-            "rob",
-        )
 
-        final_result.repartition(self.config.get("partitions")).write.partitionBy('as_of_date').\
+        rob.repartition(self.config.get("partitions")).write.partitionBy('as_of_date').\
             mode("append").parquet(final_output_path)
 
         run_crawler(self.config.get("crawler_name"))
