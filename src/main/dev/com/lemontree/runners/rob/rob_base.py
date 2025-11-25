@@ -112,7 +112,8 @@ def calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df
         "segment_nm",
         "reservation_status",
         "room_revenue",
-        "rob"
+        "rob",
+        "owned_vs_managed"
     )
 
     return rob
