@@ -1,10 +1,8 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.utils.utils_redshift import read_from_redshift
 from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
-from com.lemontree.constants.constants import PRICE_GROUP_TYPES,ROOM_TYPES
 from datetime import date, timedelta, datetime
-from rob_base import calculate_rob
-
+from com.lemontree.runners.rob.rob_base import calculate_rob
 from com.lemontree.utils.utils_helper_methods import run_crawler
 
 class RobBulk(BaseJobRunner):
@@ -28,7 +26,7 @@ class RobBulk(BaseJobRunner):
         start_date = date.today()
         self.logger.info(f"Today's Date: {start_date}")
 
-        protel_reservation_df = protel_reservation_df.withColumn("load_datetime", F.to_timestamp("load_datetime"))
+        protel_reservation_df = protel_reservation_df.withColumn("load_datetime", self.F.to_timestamp("load_datetime"))
         min_load_dt = protel_reservation_df.agg(
             self.F.min("load_datetime").alias("min_load_datetime")
         ).collect()[0]["min_load_datetime"]
@@ -47,39 +45,20 @@ class RobBulk(BaseJobRunner):
         # end_date = min_date + timedelta(days=4)
         print("Running calculations from:", min_date, "to:", end_date)
 
-        all_results_df = None
         current = min_date
         while current <= end_date:
             print(f"Processing date: {current}")
             # call the method to calculate rob
             rob = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, current)
-            if all_results_df is None:
-                all_results_df = rob
-            else:
-                all_results_df = all_results_df.unionByName(rob)
+
+            rob \
+                .repartition(self.config.get("partitions")) \
+                .write \
+                .partitionBy("as_of_date") \
+                .mode("append") \
+                .parquet(final_output_path)
 
             # Move to next date
             current += timedelta(days=1)
-
-        final_result = all_results_df.select(
-            self.F.col("as_of_date").cast("date").alias("as_of_date"),
-            self.F.col("stay_date").cast("date").alias("stay_date"),
-            "hotel_id",
-            "hotel_code",
-            "inventory",
-            "source_nm",
-            "segment_nm",
-            "reservation_status",
-            "number_of_room_nights",
-            "room_revenue",
-            "rob",
-        )
-
-        final_result \
-            .repartition(self.config.get("partitions")) \
-            .write \
-            .partitionBy("as_of_date") \
-            .mode("overwrite") \
-            .parquet(final_output_path)
 
         run_crawler(self.config.get("crawler_name"))

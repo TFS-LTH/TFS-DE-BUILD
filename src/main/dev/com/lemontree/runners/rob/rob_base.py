@@ -1,7 +1,10 @@
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.constants.constants import ROOM_TYPES, PRICE_GROUP_TYPES, RESERVATION_STATUS, RESERVATION_STATUS_MAPPING
+from com.lemontree.constants.constants import ROOM_TYPES, PRICE_GROUP_TYPES, RESERVATION_STATUS, \
+    RESERVATION_STATUS_MAPPING
 
-def calculate_rob(self, fact_reservation_df,md_hotels_df,protel_reservation_df,source_segment_df, current_date)-> BaseJobRunner.DataFrame:
+
+def calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df,
+                  current_date) -> BaseJobRunner.DataFrame:
     F = self.F
     W = self.W
     # ----------------------------
@@ -84,7 +87,8 @@ def calculate_rob(self, fact_reservation_df,md_hotels_df,protel_reservation_df,s
     # ----------------------------
     rob = (
         rns_for_rsrv_curr_month
-        .groupBy("stay_date", "hotel_id", "hotel_code", "no_of_rooms", "source", "segment", "reservation_status","owned_vs_managed")
+        .groupBy("stay_date", "hotel_id", "hotel_code", "no_of_rooms", "source", "segment", "reservation_status",
+                 "owned_vs_managed")
         .agg(
             F.sum("num_of_room_booked").alias("rob"),
             F.sum(F.col("num_of_room_booked") * F.col("room_rate")).alias("room_revenue")
@@ -97,6 +101,19 @@ def calculate_rob(self, fact_reservation_df,md_hotels_df,protel_reservation_df,s
 
     rob = rob.filter(F.col("stay_date") >= F.lit(current_date))
 
-    rob = rob.replace(RESERVATION_STATUS_MAPPING, subset=["reservation_status"])
+    rob = rob.replace(RESERVATION_STATUS_MAPPING, subset=["reservation_status"]) \
+        .select(
+        self.F.col("as_of_date").cast("date").alias("as_of_date"),
+        self.F.col("stay_date").cast("date").alias("stay_date"),
+        "hotel_id",
+        "hotel_code",
+        "inventory",
+        "source_nm",
+        "segment_nm",
+        "reservation_status",
+        "room_revenue",
+        "rob",
+        "owned_vs_managed"
+    )
 
     return rob
