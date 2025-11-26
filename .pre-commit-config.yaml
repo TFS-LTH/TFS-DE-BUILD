@@ -1,0 +1,60 @@
+repos:
+  # ------------------------------
+  # Basic sanity checks + whitespace fixes
+  # ------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace        # Removes trailing spaces
+      - id: end-of-file-fixer          # Ensures file ends with a newline
+      - id: check-yaml                 # Validates YAML syntax
+      - id: check-json                 # Validates JSON syntax
+      - id: check-added-large-files    # Prevents accidental huge commits
+        args: ["--maxkb=500"]
+      - id: detect-private-key         # Prevent committing SSH/GPG private keys
+      - id: debug-statements           # Blocks 'print' and 'pdb' usage
+
+  # ------------------------------
+  # Black — Python code formatter (Python 3.9 compatible)
+  # ------------------------------
+  - repo: https://github.com/psf/black
+    rev: 23.3.0                        # Last version supporting Python 3.9
+    hooks:
+      - id: black
+        args: ["--line-length=120"]
+
+  # ------------------------------
+  # Ruff — Linter + autofix (Python 3.9 compatible)
+  # ------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9                        # Last version supporting Python 3.9
+    hooks:
+      - id: ruff
+        args: ["--fix", "--line-length=120"]  # Linter + autofix
+
+  # ------------------------------
+  # Bandit — Security scanning (Python 3.9 compatible)
+  # ------------------------------
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5                         # Last version supporting Python 3.9
+    hooks:
+      - id: bandit
+        args: ["-lll", "-q"]           # High-severity checks only
+        additional_dependencies: ["pbr>=5.11.1"]
+
+  # ------------------------------
+  # ShellCheck — Lint shell scripts
+  # ------------------------------
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+
+  # ------------------------------
+  # Prettier — Format YAML, Markdown, JSON (runs via Node)
+  # ------------------------------
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
+    hooks:
+      - id: prettier
+        args: ["--write"]
