@@ -1,16 +1,15 @@
 import pytest
-from com.lemontree.configs.common_imports import F, T, DataFrame, SparkSession, W
+from com.lemontree.configs.common_imports import DataFrame, F, SparkSession, T, W
 
 # Try import GlueContext, else mock it for local
 try:
     from awsglue.context import GlueContext
 except ImportError:
+
     class GlueContext:
         def __init__(self, sc):
-            self.spark_session = SparkSession.builder \
-                .appName("MockGlueApp") \
-                .master("local[*]") \
-                .getOrCreate()
+            self.spark_session = SparkSession.builder.appName("MockGlueApp").master("local[*]").getOrCreate()
+
 
 def init_context():
     spark_session = SparkSession.builder.appName("TestSuite").master("local[*]").getOrCreate()
@@ -29,7 +28,7 @@ class BaseTest:
     T = T
     DataFrame = DataFrame
     W = W
-    args= {}
+    args = {}
 
     @pytest.fixture(scope="class", autouse=True)
     def setup_class(self, request):

@@ -3,7 +3,7 @@ name: publish_lemontree_whl_to_s3
 on:
   push:
     branches:
-      - '**'   # all branches
+      - "**" # all branches
 
 jobs:
   test-and-deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Dependencies
         run: |

@@ -1,7 +1,9 @@
-import sys
 import logging
+import sys
+
 import redshift_connector
 from com.lemontree.utils.utils_helper_methods import get_secrets_from_secret_manager
+
 try:
     from awsglue.dynamicframe import DynamicFrame
 except ImportError:
@@ -9,46 +11,62 @@ except ImportError:
     print("Warning: AWS Glue DynamicFrame not available. You might be running outside AWS Glue.")
 
 # Logger setup
-MSG_FORMAT = '%(asctime)s %(levelname)s %(name)s: %(message)s'
-DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+MSG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 logging.basicConfig(format=MSG_FORMAT, datefmt=DATETIME_FORMAT)
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def get_redshift_connection(secret_name='redshift_cdp_dwh', batchsize=10000, database=None):
-    host, port, dbname, username, password, redshift_temp_dir = get_secrets_from_secret_manager(secret_name)
+def get_redshift_connection(secret_name="redshift_cdp_dwh", batchsize=10000, database=None):
+    (
+        host,
+        port,
+        dbname,
+        username,
+        password,
+        redshift_temp_dir,
+    ) = get_secrets_from_secret_manager(secret_name)
     if database:
         dbname = database
 
-    conn = redshift_connector.connect(
-        host=host,
-        port=port,
-        database=dbname,
-        user=username,
-        password=password
-    )
+    conn = redshift_connector.connect(host=host, port=port, database=dbname, user=username, password=password)
 
     cursor = conn.cursor()
     cursor.execute("SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ COMMITTED;")
     cursor.close()
     return conn
 
-def write_to_redshift(glue_context, df, table_name, mode="append", secret_name='redshift_cdp_dwh',database = None):
+
+def write_to_redshift(
+    glue_context,
+    df,
+    table_name,
+    mode="append",
+    secret_name="redshift_cdp_dwh",
+    database=None,
+):
     if DynamicFrame is None:
         raise ImportError("DynamicFrame is not available. Ensure you're running in AWS Glue environment.")
 
     logger.info("Writing to Redshift Table: %s with mode: %s", table_name, mode)
 
-    host, port, dbname, username, password, redshift_temp_dir = get_secrets_from_secret_manager(secret_name)
+    (
+        host,
+        port,
+        dbname,
+        username,
+        password,
+        redshift_temp_dir,
+    ) = get_secrets_from_secret_manager(secret_name)
     if database:
         dbname = database
 
     if mode == "overwrite":
         glue_context.write_dynamic_frame.from_options(
-            frame = DynamicFrame.fromDF(df, glue_context, "test_temp"),
+            frame=DynamicFrame.fromDF(df, glue_context, "test_temp"),
             connection_type="redshift",
-            connection_options= {
+            connection_options={
                 "url": f"jdbc:redshift://{host}:{port}/{dbname}",
                 "dbtable": table_name,
                 "user": username,
@@ -56,30 +74,46 @@ def write_to_redshift(glue_context, df, table_name, mode="append", secret_name='
                 "redshiftTmpDir": redshift_temp_dir,
                 "batchsize": "100000",
                 "isolationLevel": "READ_COMMITTED",
-                "preactions": f"TRUNCATE TABLE {table_name}"
-            })
+                "preactions": f"TRUNCATE TABLE {table_name}",
+            },
+        )
     else:
         glue_context.write_dynamic_frame.from_options(
-            frame = DynamicFrame.fromDF(df, glue_context, "test_temp"),
+            frame=DynamicFrame.fromDF(df, glue_context, "test_temp"),
             connection_type="redshift",
-            connection_options= {
+            connection_options={
                 "url": f"jdbc:redshift://{host}:{port}/{dbname}",
                 "dbtable": table_name,
                 "user": username,
                 "password": password,
                 "redshiftTmpDir": redshift_temp_dir,
                 "batchsize": "100000",
-                "isolationLevel": "READ_COMMITTED"
-            })
+                "isolationLevel": "READ_COMMITTED",
+            },
+        )
     logger.info(f"Data written to Redshift table {table_name} successfully.")
     return None
 
-def read_from_redshift(glue_context, table_name=None, query=None, secret_name='redshift_cdp_dwh', database=None):
+
+def read_from_redshift(
+    glue_context,
+    table_name=None,
+    query=None,
+    secret_name="redshift_cdp_dwh",
+    database=None,
+):
     """
-    Read from Redshift and return a dataframe. 
+    Read from Redshift and return a dataframe.
     """
     df = None
-    host, port, dbname, username, password, redshift_temp_dir = get_secrets_from_secret_manager(secret_name)
+    (
+        host,
+        port,
+        dbname,
+        username,
+        password,
+        redshift_temp_dir,
+    ) = get_secrets_from_secret_manager(secret_name)
 
     if database:
         dbname = database
@@ -93,21 +127,26 @@ def read_from_redshift(glue_context, table_name=None, query=None, secret_name='r
     logger.info(f"Reading from Redshift. Table: {table_name}, Query: {query}")
 
     if query:
-        df = spark.read.format("jdbc") \
-            .option("url", f"jdbc:redshift://{host}:{port}/{dbname}") \
-            .option("query", query) \
-            .option("user", username) \
-            .option("password", password) \
+        df = (
+            spark.read.format("jdbc")
+            .option("url", f"jdbc:redshift://{host}:{port}/{dbname}")
+            .option("query", query)
+            .option("user", username)
+            .option("password", password)
             .load()
+        )
     elif table_name:
-        df = spark.read.format("jdbc") \
-            .option("url", f"jdbc:redshift://{host}:{port}/{dbname}") \
-            .option("dbtable", table_name) \
-            .option("user", username) \
-            .option("password", password) \
+        df = (
+            spark.read.format("jdbc")
+            .option("url", f"jdbc:redshift://{host}:{port}/{dbname}")
+            .option("dbtable", table_name)
+            .option("user", username)
+            .option("password", password)
             .load()
+        )
 
     return df
+
 
 def run_query_on_redshift(conn, query, commit=False, fetch=True):
     """
@@ -140,6 +179,7 @@ def run_query_on_redshift(conn, query, commit=False, fetch=True):
         conn.rollback()
         logger.info("Rolled back.")
         sys.exit(1)
+
 
 def align_schema_with_redshift(glue_context, df, existing_df):
     try:
