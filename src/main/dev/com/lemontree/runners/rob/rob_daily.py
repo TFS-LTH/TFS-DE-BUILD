@@ -1,9 +1,16 @@
-from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_redshift import read_from_redshift
-from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
 from datetime import date
-from com.lemontree.utils.utils_helper_methods import run_crawler
+
+from com.lemontree.constants.redshift_tables import (
+    GOLD_DIM_SOURCE_SEGMENT,
+    GOLD_FACT_RESERVATIONS,
+    MD_HOTELS,
+    SILVER_PROTEL_RESERVATIONS,
+)
+from com.lemontree.runners.base.base_runner import BaseJobRunner
 from com.lemontree.runners.rob.rob_base import calculate_rob
+from com.lemontree.utils.utils_helper_methods import run_crawler
+from com.lemontree.utils.utils_redshift import read_from_redshift
+
 
 class RobDaily(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
@@ -27,9 +34,17 @@ class RobDaily(BaseJobRunner):
         self.logger.info(f"Today's Date: {start_date}")
 
         # call the method to calculate rob
-        rob = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, start_date)
+        rob = calculate_rob(
+            self,
+            fact_reservation_df,
+            md_hotels_df,
+            protel_reservation_df,
+            source_segment_df,
+            start_date,
+        )
 
-        rob.repartition(self.config.get("partitions")).write.partitionBy('as_of_date').\
-            mode("append").parquet(final_output_path)
+        rob.repartition(self.config.get("partitions")).write.partitionBy("as_of_date").mode("append").parquet(
+            final_output_path
+        )
 
         run_crawler(self.config.get("crawler_name"))

@@ -6,10 +6,7 @@ except ImportError:
     # Mock GlueContext for local testing
     class GlueContext:
         def __init__(self, sc):
-            self.spark_session = SparkSession.builder \
-                .appName("MockGlueApp") \
-                .master("local[*]") \
-                .getOrCreate()
+            self.spark_session = SparkSession.builder.appName("MockGlueApp").master("local[*]").getOrCreate()
 
 
 def init_context(spark_session_name, config):

@@ -1,9 +1,16 @@
+from datetime import date, datetime, timedelta
+
+from com.lemontree.constants.redshift_tables import (
+    GOLD_DIM_SOURCE_SEGMENT,
+    GOLD_FACT_RESERVATIONS,
+    MD_HOTELS,
+    SILVER_PROTEL_RESERVATIONS,
+)
 from com.lemontree.runners.base.base_runner import BaseJobRunner
-from com.lemontree.utils.utils_redshift import read_from_redshift
-from com.lemontree.constants.redshift_tables import GOLD_FACT_RESERVATIONS, MD_HOTELS, SILVER_PROTEL_RESERVATIONS, GOLD_DIM_SOURCE_SEGMENT
-from datetime import date, timedelta, datetime
 from com.lemontree.runners.rob.rob_base import calculate_rob
 from com.lemontree.utils.utils_helper_methods import run_crawler
+from com.lemontree.utils.utils_redshift import read_from_redshift
+
 
 class RobBulk(BaseJobRunner):
     def run_job(self, spark_session, glue_context) -> None:
@@ -27,9 +34,9 @@ class RobBulk(BaseJobRunner):
         self.logger.info(f"Today's Date: {start_date}")
 
         protel_reservation_df = protel_reservation_df.withColumn("load_datetime", self.F.to_timestamp("load_datetime"))
-        min_load_dt = protel_reservation_df.agg(
-            self.F.min("load_datetime").alias("min_load_datetime")
-        ).collect()[0]["min_load_datetime"]
+        min_load_dt = protel_reservation_df.agg(self.F.min("load_datetime").alias("min_load_datetime")).collect()[0][
+            "min_load_datetime"
+        ]
 
         if self.args.get("start_date").strip() == "":
             min_date = min_load_dt.date()
@@ -49,14 +56,18 @@ class RobBulk(BaseJobRunner):
         while current <= end_date:
             print(f"Processing date: {current}")
             # call the method to calculate rob
-            rob = calculate_rob(self, fact_reservation_df, md_hotels_df, protel_reservation_df, source_segment_df, current)
+            rob = calculate_rob(
+                self,
+                fact_reservation_df,
+                md_hotels_df,
+                protel_reservation_df,
+                source_segment_df,
+                current,
+            )
 
-            rob \
-                .repartition(self.config.get("partitions")) \
-                .write \
-                .partitionBy("as_of_date") \
-                .mode("append") \
-                .parquet(final_output_path)
+            rob.repartition(self.config.get("partitions")).write.partitionBy("as_of_date").mode("append").parquet(
+                final_output_path
+            )
 
             # Move to next date
             current += timedelta(days=1)

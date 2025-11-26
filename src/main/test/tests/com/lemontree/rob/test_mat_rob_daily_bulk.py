@@ -1,14 +1,15 @@
-from com.lemontree.utils.utils_helper_methods import delete_directory
-from tests.com.lemontree.base.base_test import BaseTest
 from datetime import date
 from pathlib import Path
-from pyspark.sql.functions import col
+
 import pytest
-from pyspark.sql import functions as F
 from com.lemontree.runners.mat.materialized import calculate_mat
+from com.lemontree.utils.utils_helper_methods import delete_directory
+from pyspark.sql import functions as F
+from pyspark.sql.functions import col
+from tests.com.lemontree.base.base_test import BaseTest
+
 
 class TestMaterializedRobDaily(BaseTest):
-
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self, test_root_dir):
         # Setup
@@ -24,9 +25,7 @@ class TestMaterializedRobDaily(BaseTest):
         self.target_hotel_code = "AHRMB1"
         self.expected_rob = 641
 
-        self.test_config={
-            "output_path":r"test_outputs\rob_materialized_daily"
-        }
+        self.test_config = {"output_path": r"test_outputs\rob_materialized_daily"}
 
         yield
 
@@ -34,24 +33,28 @@ class TestMaterializedRobDaily(BaseTest):
         delete_directory(self.test_config["output_path"])
 
     def test_calculate_mat(self):
-        fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
+        fact_reservation_df = (
+            self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
+        )
         md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.md_hotels))
-        dim_source_segment_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.dim_source_segment))
-        result_df = calculate_mat(self,
+        dim_source_segment_df = (
+            self.spark_session.read.format("csv").option("header", "true").load(str(self.dim_source_segment))
+        )
+        result_df = calculate_mat(
+            self,
             fact_reservation_df,
             md_hotels_df,
             dim_source_segment_df,
-            self.filter_date
+            self.filter_date,
         )
 
         output_path = str(Path(self.test_config["output_path"]))
-        print('output_path = ', output_path)
+        print("output_path = ", output_path)
 
         test_rob_sum = (
-            result_df
-            .filter(
-                (col("as_of_date") == F.lit(self.filter_date).cast("date")) &
-                (col("hotel_code") == self.target_hotel_code)
+            result_df.filter(
+                (col("as_of_date") == F.lit(self.filter_date).cast("date"))
+                & (col("hotel_code") == self.target_hotel_code)
             )
             .groupBy("as_of_date", "hotel_code")
             .agg(F.sum("Total_rooms").alias("rob_sum"))
@@ -59,43 +62,50 @@ class TestMaterializedRobDaily(BaseTest):
         )
         assert test_rob_sum == self.expected_rob
 
-
     def test_calculate_mat_bulk(self):
         # ---------------------------
         # Create mock DataFrames
         # ---------------------------
 
-        fact_reservation_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
+        fact_reservation_df = (
+            self.spark_session.read.format("csv").option("header", "true").load(str(self.fact_reservation))
+        )
         md_hotels_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.md_hotels))
-        dim_source_segment_df = self.spark_session.read.format("csv").option("header", "true").load(str(self.dim_source_segment))
-
+        dim_source_segment_df = (
+            self.spark_session.read.format("csv").option("header", "true").load(str(self.dim_source_segment))
+        )
 
         # ---------------------------
         # Run MAT calculation
         # ---------------------------
-        result_df = calculate_mat(self,
+        result_df = calculate_mat(
+            self,
             fact_reservation_df,
             md_hotels_df,
             dim_source_segment_df,
-            self.filter_date)
+            self.filter_date,
+        )
 
         output_path = str(Path(self.test_config["output_path"]))
         print("output_path =", output_path)
 
-        (result_df.repartition(1).write.partitionBy("as_of_date")
-            .mode("append").
-         option("header", True).
-         option("delimiter", ",").csv(output_path))
+        (
+            result_df.repartition(1)
+            .write.partitionBy("as_of_date")
+            .mode("append")
+            .option("header", True)
+            .option("delimiter", ",")
+            .csv(output_path)
+        )
 
         # ---------------------------
         # Validate results
         # ---------------------------
 
         test_rob_sum = (
-            result_df
-            .filter(
-                (col("as_of_date") == F.lit(self.filter_date).cast("date")) &
-                (col("hotel_code") == self.target_hotel_code)
+            result_df.filter(
+                (col("as_of_date") == F.lit(self.filter_date).cast("date"))
+                & (col("hotel_code") == self.target_hotel_code)
             )
             .groupBy("as_of_date", "hotel_code")
             .agg(F.sum("Total_rooms").alias("rob_sum"))

@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name="lemontree",
@@ -9,12 +9,12 @@ setup(
     author_email="you@example.com",
     python_requires=">=3.9",
     package_data={
-            "com.lemontree": [
-                "**/*.yaml",
-                "**/*.yml",
-                "**/*.json",
-                "**/*.conf",
-                "**/*.txt"
-            ],
-        },
+        "com.lemontree": [
+            "**/*.yaml",
+            "**/*.yml",
+            "**/*.json",
+            "**/*.conf",
+            "**/*.txt",
+        ],
+    },
 )
